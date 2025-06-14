@@ -3,7 +3,7 @@
 
 int theta = 20;
 int phi = 35;
-int dim = 85;
+int dim = 150;
 
 int mode=0;       //  Projection mode
 int fov=55;       //  Field of view (for perspective)
@@ -74,19 +74,21 @@ void display()
     
 
     // Drawing Axis
-    double length = 200.0;
-    double width = 50.0;
+    double length = 250.0;
+    double width = 100.0;
     double side_walk_w = 10.0;
 
-    double wall_width = width/8;
+    GridPosMarkers(length, width);
 
-    Plane(GL_POLYGON, 0,0,0, 0, 0,0, 0.2, 0.2, 0.2, length, 3*width/4); 
-    
-    
+    double wall_width = width/16;
 
     glEnable(GL_POLYGON_OFFSET_FILL);
+    
     glPolygonOffset(1,1);
-    Plane(GL_POLYGON, 0,0,0, 0, 0,0, 0.1, 0.5, 0.12, length, width); // Road + Grass
+    Plane(GL_POLYGON, 0,0,0, 0, 0,0, 0.2, 0.2, 0.2, length*2, 6*width/7); // Road
+    
+    glPolygonOffset(2,2);
+    Plane(GL_POLYGON, 0,0,0, 0, 0,0, 0.1, 0.5, 0.12, length*2, width); // Grass
 
     glDisable(GL_POLYGON_OFFSET_FILL);
 
@@ -97,11 +99,10 @@ void display()
     Plane(GL_POLYGON, -(width/2+side_walk_w/2), 0, 0, 0,0,0, 0.2, 0.2, 0.2, length, side_walk_w);
 
 
-    LightPoles(wall_width, width, length);
-    // LightPole(width/2+1,0,0, 0.25, 40);
-    // LightPole(-(width/2+1),0,0, 0.25, 40);
-    
-    // LightPole(-(width/2+1),0,0, 0.25, 40);
+    LightPoles(wall_width, width, length*2);
+
+    GrandStand(length, width, side_walk_w);
+
 
     glColor3f(1,1,1);
     glBegin(GL_LINES);
