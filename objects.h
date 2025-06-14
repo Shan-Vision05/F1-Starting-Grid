@@ -14,4 +14,6 @@ void GridPosMarkers(double , double );
 
 void GrandStand(double , double , double );
 
+void StartLights(double , double );
+
 #endif

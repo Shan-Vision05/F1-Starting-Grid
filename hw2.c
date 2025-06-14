@@ -95,13 +95,15 @@ void display()
     Plane(GL_POLYGON, -width/2,wall_width/2,0, 0, 0, 90, 0.5,0.5,0.5, length, wall_width); // Side Wall - Left
     Plane(GL_POLYGON, width/2,wall_width/2,0, 0, 0, 90, 0.5,0.5,0.5, length, wall_width); // Side Wall - right
 
-    Plane(GL_POLYGON, width/2+side_walk_w/2, 0, 0, 0,0,0, 0.2, 0.2, 0.2, length, side_walk_w);
+    Plane(GL_POLYGON, width/2+side_walk_w/2, 0, 0, 0,0,0,  0.8, 0.8, 0.8, length, side_walk_w);
     Plane(GL_POLYGON, -(width/2+side_walk_w/2), 0, 0, 0,0,0, 0.2, 0.2, 0.2, length, side_walk_w);
 
 
     LightPoles(wall_width, width, length*2);
 
     GrandStand(length, width, side_walk_w);
+
+    StartLights(length, width);
 
 
     glColor3f(1,1,1);
@@ -141,16 +143,16 @@ void special(int key,int x,int y)
 {
    //  Right arrow key - increase azimuth by 5 degrees
    if (key == GLUT_KEY_RIGHT)
-      theta += 5;
+      theta += 2;
    //  Left arrow key - decrease azimuth by 5 degrees
    else if (key == GLUT_KEY_LEFT)
-      theta -= 5;
+      theta -= 2;
    //  Up arrow key - increase elevation by 5 degrees
    else if (key == GLUT_KEY_UP)
-      phi -= 5;
+      phi -= 2;
    //  Down arrow key - decrease elevation by 5 degrees
    else if (key == GLUT_KEY_DOWN)
-      phi += 5;
+      phi += 2;
    //  Keep angles to +/-360 degrees
    theta %= 360;
    phi %= 360;
