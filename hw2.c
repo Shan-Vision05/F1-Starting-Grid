@@ -85,10 +85,15 @@ void display()
     glEnable(GL_POLYGON_OFFSET_FILL);
     
     glPolygonOffset(1,1);
-    Plane(GL_POLYGON, 0,0,0, 0, 0,0, 0.2, 0.2, 0.2, length*2, 6*width/7); // Road
+    Plane(GL_POLYGON, 0,0,0, 0, 0,0, 0.2, 0.2, 0.2, length*2.3, 6*width/7); // Road
+
+    glPushMatrix();
+    glTranslatef(20,0,-15);
+    Plane(GL_POLYGON, width/3, 0, length - length/16 , -30, 0, 0, 0.2, 0.2, 0.2, length/2, 6*width/21);
+    glPopMatrix();
     
     glPolygonOffset(2,2);
-    Plane(GL_POLYGON, 0,0,0, 0, 0,0, 0.1, 0.5, 0.12, length*2, width); // Grass
+    Plane(GL_POLYGON, 0,0,0, 0, 0,0, 0.1, 0.5, 0.12, length*2.3, width); // Grass
 
     glDisable(GL_POLYGON_OFFSET_FILL);
 
@@ -97,6 +102,8 @@ void display()
 
     Plane(GL_POLYGON, width/2+side_walk_w/2, 0, 0, 0,0,0,  0.8, 0.8, 0.8, length, side_walk_w);
     Plane(GL_POLYGON, -(width/2+side_walk_w/2), 0, 0, 0,0,0, 0.2, 0.2, 0.2, length, side_walk_w);
+
+    
 
 
     LightPoles(wall_width, width, length*2);
