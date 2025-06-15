@@ -232,20 +232,20 @@ void GrandStand(double h, double w, double side_walk_w)
     int length = h;
     int i =0;
     //Right Grand Stand
-    for(i = 1; i< 10;i++)
-    {
-        if (i%2 == 0)
-            glColor3f(0.5,0.5,0.5);
-        else
-            glColor3f(0.6,0.6,0.6);
+    // for(i = 1; i< 10;i++)
+    // {
+    //     if (i%2 == 0)
+    //         glColor3f(0.5,0.5,0.5);
+    //     else
+    //         glColor3f(0.6,0.6,0.6);
         
-        cube(w/2+side_walk_w+ (2*(i-1)+1)*width, i*height, 0, width, i*height, length/2,0 );
-    }
+    //     cube(w/2+side_walk_w+ (2*(i-1)+1)*width, i*height, 0, width, i*height, length/2,0 );
+    // }
 
     
 
     //Left Grand Stand
-    for(int i = 1; i<10;i++)
+    for(i = 1; i<10;i++)
     {
         if (i%2 == 0)
             glColor3f(0.5,0.5,0.5);

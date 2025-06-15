@@ -1,11 +1,12 @@
 #include "CSCI5229.h"
 #include "objects.h"
+#include "car.h"
 
 int theta = 20;
 int phi = 35;
-int dim = 150;
+int dim = 50;
 
-int mode=0;       //  Projection mode
+int mode=1;       //  Projection mode
 int fov=55;       //  Field of view (for perspective)
 double asp=1;     //  Aspect ratio
 
@@ -46,33 +47,8 @@ static void Project()
    glLoadIdentity();
 }
 
-
-
-void display()
+void DrawScene()
 {
-    //  Erase the window and the depth buffer
-    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-    //  Enable Z-buffering in OpenGL
-    glEnable(GL_DEPTH_TEST);
-
-    glLoadIdentity();
-
-    if (mode)
-   {
-      double Ex = -2*dim* Sin(theta) * Cos(phi);
-      double Ey = +2*dim        * Sin(phi);
-      double Ez = +2*dim*Cos(theta)*Cos(phi);
-      gluLookAt(Ex,Ey,Ez , 0,0,0 , 0,Cos(phi),0);
-   }
-   //  Orthogonal - set world orientation
-   else
-   {
-      glRotatef(phi,1,0,0);
-      glRotatef(theta,0,1,0);
-   }
-
-    
-
     // Drawing Axis
     double length = 250.0;
     double width = 100.0;
@@ -82,10 +58,13 @@ void display()
 
     double wall_width = width/16;
 
+    double pit_lane_w = 6*width/21;
+
     glEnable(GL_POLYGON_OFFSET_FILL);
     
     glPolygonOffset(1,1);
     Plane(GL_POLYGON, 0,0,0, 0, 0,0, 0.2, 0.2, 0.2, length*2.3, 6*width/7); // Road
+    Plane(GL_POLYGON, width/2+side_walk_w+ pit_lane_w/2, 0,0, 0,0,0, 0.2, 0.2, 0.2, length*1.5, pit_lane_w);
 
     glPushMatrix();
     glTranslatef(20,0,-15);
@@ -112,6 +91,35 @@ void display()
 
     StartLights(length, width);
 
+}
+
+void display()
+{
+    //  Erase the window and the depth buffer
+    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+    //  Enable Z-buffering in OpenGL
+    glEnable(GL_DEPTH_TEST);
+
+    glLoadIdentity();
+
+    if (mode)
+   {
+      double Ex = -2*dim* Sin(theta) * Cos(phi);
+      double Ey = +2*dim        * Sin(phi);
+      double Ez = +2*dim*Cos(theta)*Cos(phi);
+      gluLookAt(Ex,Ey,Ez , 0,0,0 , 0,Cos(phi),0);
+   }
+   //  Orthogonal - set world orientation
+   else
+   {
+      glRotatef(phi,1,0,0);
+      glRotatef(theta,0,1,0);
+   }
+
+    DrawScene();
+
+    car();
+    
 
     glColor3f(1,1,1);
     glBegin(GL_LINES);
