@@ -4,11 +4,21 @@
 
 int theta = 20;
 int phi = 35;
-int dim = 50;
+int dim = 100;
 
 int mode=1;       //  Projection mode
 int fov=55;       //  Field of view (for perspective)
 double asp=1;     //  Aspect ratio
+
+
+// First Person perspective Camera states
+
+float camX = 0.0, camY = 10, camZ = 50;
+
+
+float moveStep = 1;
+float turnStep = 2;
+
 
 
 // Helper Functions
@@ -102,12 +112,32 @@ void display()
 
     glLoadIdentity();
 
-    if (mode)
+    double Ex = -2*dim* Sin(theta) * Cos(phi);
+    double Ey = +2*dim * Sin(phi);
+    double Ez = +2*dim*Cos(theta)*Cos(phi);
+
+    if (mode==1)
    {
-      double Ex = -2*dim* Sin(theta) * Cos(phi);
-      double Ey = +2*dim        * Sin(phi);
-      double Ez = +2*dim*Cos(theta)*Cos(phi);
+      
       gluLookAt(Ex,Ey,Ez , 0,0,0 , 0,Cos(phi),0);
+   }
+   else if(mode ==2)
+   {
+        // float lookX = camX + Sin(theta);
+        // float lookZ = camZ - Cos(theta);
+        float lookX = Ex + Sin(theta);
+        float lookZ = Ez - Cos(theta);
+
+        // gluLookAt(camX, camY, camZ,
+        //     lookX, camY, lookZ,
+        //     0,1,0);
+        gluLookAt(Ex, camY, Ez,
+            lookX, camY, lookZ,
+            0,1,0);
+        
+        Ex = lookX;
+        Ez = lookZ;
+
    }
    //  Orthogonal - set world orientation
    else
@@ -141,7 +171,7 @@ void display()
     Print("Z");
 
     glWindowPos2i(5,5);
-    Print("View Angle=%d,%d | Mode=%c", phi, theta, mode? 'p':'o');
+    Print("View Angle=%d,%d | Mode=%d", phi, theta, mode);
 
     ErrCheck("display");
     glFlush();
@@ -198,19 +228,34 @@ void reshape(int width,int height)
 void key(unsigned char ch, int x, int y)
 {
     //  Exit on ESC
-   if (ch == 27)
-   exit(0);
+    if (ch == 27)
+        exit(0);
     //  Reset view angle
     else if (ch == '0')
-    theta = phi = 0;
+        theta = phi = 0;
     //  Switch display mode
     else if (ch == 'm' || ch == 'M')
-    mode = 1-mode;
+        mode = (mode+1)%3;
     //  Change field of view angle
     else if (ch == '-' && ch>1)
-    fov--;
+        fov--;
     else if (ch == '+' && ch<179)
-    fov++;
+        fov++;
+
+    else if(ch=='w' || ch == 'W')
+    {
+        camX += sinf(theta)*moveStep;
+        camZ -= cosf(theta)*moveStep;
+    }
+    else if(ch=='s' || ch=='S')
+    {
+        camX -= sinf(theta)*moveStep;
+        camZ += cosf(theta)*moveStep;
+    }
+    else if(ch =='a' || ch =='A')
+        theta -= turnStep;
+    else if(ch =='d' || ch =='D')
+        theta += turnStep;
     //  Reproject
     Project();
     //  Tell GLUT it is necessary to redisplay the scene
@@ -226,8 +271,6 @@ int main(int argc, char* argv[])
     glutInitWindowSize(750, 750);
 
     glutCreateWindow("Assignment 2: Shanmukha Vamshi Kuruba");
-
-
 
     #ifdef USEGLEW
     if (glewInit()!=GLEW_OK) Fatal("Error initializing GLEW\n");
