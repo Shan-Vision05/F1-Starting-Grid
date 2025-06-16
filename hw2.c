@@ -1,3 +1,26 @@
+/*
+*   Commands:
+*   
+*   ------------- Same as Example ------------
+*   Arrow Keys: 
+                1. Change View Angle in (Oblique overhead perspective/ orthogonal) 
+                2. Navigate the scene in First person perspective
+                    (Up and Down arrow) to move forward and backward
+                    (left and right arrow) to rotate about the camera axis
+*                 
+*   0: Reset View Angle
+*
+*   a/A: Turn Axis on/off
+*
+*   s/S: View only the Car or View entire scene (acts as a toggle button)
+*
+*   ESC: Exit
+*
+*   m/M: swicth between (Oblique Overhead Perspective, Orthogonal and First Person Perspective Projection)
+*  
+*   +/- : to zoom out/zoom in when in Oblique overhead perspective or First person perspecive
+*/
+
 #include "CSCI5229.h"
 #include "objects.h"
 #include "car.h"
@@ -11,6 +34,7 @@ int fov=55;       //  Field of view (for perspective)
 double asp=1;     //  Aspect ratio
 
 int showCarOnly = 1;
+int showAxis = 1;
 
 // First Person perspective Camera states
 
@@ -127,28 +151,36 @@ void display()
 
     car(); // Renders the car
     
+    if(showAxis ==1)
+    {
+        glColor3f(1,1,1);
+        glBegin(GL_LINES);
+        glVertex3d(0,0,0);
+        glVertex3d(50,0,0);
+        glVertex3d(0,0,0);
+        glVertex3d(0,50,0);
+        glVertex3d(0,0,0);
+        glVertex3d(0,0,50);
+        glEnd();
 
-    glColor3f(1,1,1);
-    glBegin(GL_LINES);
-    glVertex3d(0,0,0);
-    glVertex3d(50,0,0);
-    glVertex3d(0,0,0);
-    glVertex3d(0,50,0);
-    glVertex3d(0,0,0);
-    glVertex3d(0,0,50);
-    glEnd();
+        glRasterPos3d(50,0,0);
+        Print("X");
 
-    glRasterPos3d(50,0,0);
-    Print("X");
+        glRasterPos3d(0,50,0);
+        Print("Y");
 
-    glRasterPos3d(0,50,0);
-    Print("Y");
+        glRasterPos3d(0,0,50);
+        Print("Z");
 
-    glRasterPos3d(0,0,50);
-    Print("Z");
+        
+    }
 
+    
     glWindowPos2i(5,5);
-    Print("View Angle=%d,%d | Mode=%d", phi, theta, mode);
+    float y_coord = mode!=2? Ey:camY;
+    
+    Print("View Angle=%d,%d  |  Camera Coordnates: (%.2f,%.2f,%.2f)  |  Mode= %s", phi, theta, Ex, y_coord, Ez,
+        mode == 0? "Overhead Orthogonal": mode == 1?"Overhead Perspective":"First Person Perspective");
 
     ErrCheck("display");
     glFlush();
@@ -181,9 +213,9 @@ void special(int key,int x,int y)
         else
         {
             if(key==GLUT_KEY_LEFT)  
-                camAngle += turnStep;
-            if(key==GLUT_KEY_RIGHT) 
                 camAngle -= turnStep;
+            if(key==GLUT_KEY_RIGHT) 
+                camAngle += turnStep;
             
             float dx  =  Sin(camAngle)*moveStep;
             float dz  = -Cos(camAngle)*moveStep;
@@ -234,7 +266,10 @@ void key(unsigned char ch, int x, int y)
 
     
     else if (ch == '0') //  Reset view angle
-        theta = phi = 0;
+        {
+            theta = 20;
+            phi = 35;
+        }
 
     
     else if (ch == 'm' || ch == 'M') //  Switch display mode
@@ -251,6 +286,9 @@ void key(unsigned char ch, int x, int y)
 
     else if(ch == 's' || ch =='S')
         showCarOnly = (showCarOnly+1)%2;
+
+    else if(ch == 'a' || ch =='A')
+        showAxis = (showAxis+1)%2;
         
 
     //  Change field of view angle
@@ -271,7 +309,7 @@ int main(int argc, char* argv[])
 
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 
-    glutInitWindowSize(750, 750);
+    glutInitWindowSize(900, 900);
 
     glutCreateWindow("Assignment 2: Shanmukha Vamshi Kuruba");
 
