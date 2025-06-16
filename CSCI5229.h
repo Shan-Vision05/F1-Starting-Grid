@@ -46,6 +46,7 @@
 //  cos and sin in degrees
 #define Cos(th) cos(3.14159265/180*(th))
 #define Sin(th) sin(3.14159265/180*(th))
+#define RAD2DEG(x) ((x)*180.0/3.14159265)
 
 #ifdef __cplusplus
 extern "C" {

@@ -13,13 +13,16 @@ double asp=1;     //  Aspect ratio
 
 // First Person perspective Camera states
 
-float camX = 0.0, camY = 10, camZ = 50;
+float  camY = 10;
+float camAngle = 0;
 
+float camAngle_theta = 20;
+float camAngle_phi = 35;
 
 float moveStep = 1;
 float turnStep = 2;
 
-
+float Ex, Ey, Ez = 0;
 
 // Helper Functions
 
@@ -43,11 +46,10 @@ static void Project()
    //  Undo previous transformations
    glLoadIdentity();
    //  Perspective transformation
-   if (mode)
-    {
-        
+   if (mode==1)
         gluPerspective(fov,asp,dim/10,10*dim);
-    }
+    else if (mode ==2)
+        gluPerspective(fov,asp,dim/10,10*dim);
    //  Orthogonal projection
    else
       glOrtho(-asp*dim,+asp*dim, -dim,+dim, -dim,+dim);
@@ -112,35 +114,28 @@ void display()
 
     glLoadIdentity();
 
-    double Ex = -2*dim* Sin(theta) * Cos(phi);
-    double Ey = +2*dim * Sin(phi);
-    double Ez = +2*dim*Cos(theta)*Cos(phi);
+    
 
-    if (mode==1)
+    if (mode==1) // Oblique overhead perspective;
    {
-      
-      gluLookAt(Ex,Ey,Ez , 0,0,0 , 0,Cos(phi),0);
+        Ex = -2*dim* Sin(theta) * Cos(phi);
+        Ey = +2*dim * Sin(phi);
+        Ez = +2*dim*Cos(theta)*Cos(phi);
+        gluLookAt(Ex,Ey,Ez , 0,0,0 , 0,Cos(phi),0);
    }
-   else if(mode ==2)
+   else if(mode ==2) //First person perspective.
    {
-        // float lookX = camX + Sin(theta);
-        // float lookZ = camZ - Cos(theta);
-        float lookX = Ex + Sin(theta);
-        float lookZ = Ez - Cos(theta);
 
-        // gluLookAt(camX, camY, camZ,
-        //     lookX, camY, lookZ,
-        //     0,1,0);
+        float dx  =  Sin(camAngle);
+        float dz  = -Cos(camAngle);
+
         gluLookAt(Ex, camY, Ez,
-            lookX, camY, lookZ,
+            Ex+dx, camY, Ez+dz,
             0,1,0);
-        
-        Ex = lookX;
-        Ez = lookZ;
 
    }
-   //  Orthogonal - set world orientation
-   else
+   //  Oblique overhead orthogonal;
+   else 
    {
       glRotatef(phi,1,0,0);
       glRotatef(theta,0,1,0);
@@ -186,25 +181,49 @@ void display()
  */
 void special(int key,int x,int y)
 {
-   //  Right arrow key - increase azimuth by 5 degrees
-   if (key == GLUT_KEY_RIGHT)
-      theta += 2;
-   //  Left arrow key - decrease azimuth by 5 degrees
-   else if (key == GLUT_KEY_LEFT)
-      theta -= 2;
-   //  Up arrow key - increase elevation by 5 degrees
-   else if (key == GLUT_KEY_UP)
-      phi -= 2;
-   //  Down arrow key - decrease elevation by 5 degrees
-   else if (key == GLUT_KEY_DOWN)
-      phi += 2;
-   //  Keep angles to +/-360 degrees
-   theta %= 360;
-   phi %= 360;
-   //  Tell GLUT it is necessary to redisplay the scengluPerspectivee
-   Project();
-   
-   glutPostRedisplay();
+        if (mode !=2)
+        {
+        //  Right arrow key - increase azimuth by 5 degrees
+        if (key == GLUT_KEY_RIGHT)
+            theta += 2;
+        //  Left arrow key - decrease azimuth by 5 degrees
+        else if (key == GLUT_KEY_LEFT)
+            theta -= 2;
+        //  Up arrow key - increase elevation by 5 degrees
+        else if (key == GLUT_KEY_UP)
+            phi -= 2;
+        //  Down arrow key - decrease elevation by 5 degrees
+        else if (key == GLUT_KEY_DOWN)
+            phi += 2;
+        }
+        else
+        {
+            if(key==GLUT_KEY_LEFT)  
+                camAngle += turnStep;
+            if(key==GLUT_KEY_RIGHT) 
+                camAngle -= turnStep;
+            
+            float dx  =  Sin(camAngle)*moveStep;
+            float dz  = -Cos(camAngle)*moveStep;
+            if(key==GLUT_KEY_UP)
+            { 
+                Ex += dx; 
+                Ez += dz; 
+            }
+            if(key==GLUT_KEY_DOWN) 
+            { 
+                Ex -= dx; 
+                Ez -= dz; 
+            }
+        }
+        
+        //  Keep angles to +/-360 degrees
+        theta %= 360;
+        phi %= 360;
+    //  Tell GLUT it is necessary to redisplay the scengluPerspectivee
+    Project();
+    
+    glutPostRedisplay();
 }
 
 
@@ -235,23 +254,25 @@ void key(unsigned char ch, int x, int y)
         theta = phi = 0;
     //  Switch display mode
     else if (ch == 'm' || ch == 'M')
+    {   if (mode == 2)
+        {
+            double yaw   = RAD2DEG(atan2(Ex, Ez)) ;    // degrees
+            double pitch = RAD2DEG(atan2(y, sqrt(Ex*Ex+Ez*Ez))) ; // degrees
+
+            theta = (int)yaw %360;
+            phi = (int)pitch %360;
+        }
         mode = (mode+1)%3;
+    }
+        
+
     //  Change field of view angle
     else if (ch == '-' && ch>1)
         fov--;
     else if (ch == '+' && ch<179)
         fov++;
 
-    else if(ch=='w' || ch == 'W')
-    {
-        camX += sinf(theta)*moveStep;
-        camZ -= cosf(theta)*moveStep;
-    }
-    else if(ch=='s' || ch=='S')
-    {
-        camX -= sinf(theta)*moveStep;
-        camZ += cosf(theta)*moveStep;
-    }
+
     else if(ch =='a' || ch =='A')
         theta -= turnStep;
     else if(ch =='d' || ch =='D')
