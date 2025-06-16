@@ -43,13 +43,13 @@ Vec2 Monocoque_CP_Down[5] ={
 
 
 
-Vec2 GetPoint_Bezier(const Vec2 *CP, size_t n, float t){
-    // make a local copy we can lerp in-place
+Vec2 GetPoint_Bezier(const Vec2 *CP, size_t n, float t)
+{
+    // Gives us the point on the Bezier curve at time step t
     Vec2 tmp[n];
     for(size_t i=0; i<n; ++i)
         tmp[i] = CP[i];
 
-    // de Casteljau: iteratively blend
     for(size_t k=1; k<n; ++k){
         for(size_t i=0; i<n-k; ++i){
             float u = 1 - t;
@@ -57,8 +57,7 @@ Vec2 GetPoint_Bezier(const Vec2 *CP, size_t n, float t){
             tmp[i].y = u*tmp[i].y + t*tmp[i+1].y;
         }
     }
-    // the first entry is the point on the curve
-    return tmp[0];
+    return tmp[0]; 
 }
 
 void CarNose()
@@ -78,7 +77,6 @@ void CarNose()
         float nose_w = 4 - 3 * t; // tapering as it reaches the tip
 
         glVertex3f(  -nose_w, point.y, point.z);
-        // right vertex
         glVertex3f(  nose_w, point.y, point.z);
     }
     glEnd();
@@ -93,7 +91,6 @@ void CarNose()
         float nose_w = 4 - 3 * t; // tapering as it reaches the tip
 
         glVertex3f(  -nose_w, point.y, point.z);
-        // right vertex
         glVertex3f(  nose_w, point.y, point.z);
     }
     glEnd();
@@ -111,7 +108,6 @@ void CarNose()
 
         glVertex3f(  nose_w, point1.y, point1.z);
         glVertex3f(  nose_w, point2.y, point2.z);
-        // right vertex
     }
     glEnd();
 
@@ -126,7 +122,6 @@ void CarNose()
 
         glVertex3f(  -nose_w, point1.y, point1.z);
         glVertex3f(  -nose_w, point2.y, point2.z);
-        // right vertex
     }
 
     glEnd();
@@ -153,10 +148,9 @@ void CarMonocoque()
         float t = (float)i / (float)samples;
         Vec2 point = GetPoint_Bezier(Monocoque_CP_Top, 6, t);
 
-        float nose_w = 4 + amp * Sin(angle*t); // tapering as it reaches the tip
+        float nose_w = 4 + amp * Sin(angle*t); // tapering as it reaches the end
 
         glVertex3f(  -nose_w, point.y, point.z);
-        // right vertex
         glVertex3f(  nose_w, point.y, point.z);
     }
     glEnd();
@@ -168,10 +162,9 @@ void CarMonocoque()
         float t = (float)i / (float)samples;
         Vec2 point = GetPoint_Bezier(Monocoque_CP_Down, 5, t);
 
-        float nose_w = 4 + amp * Sin(angle*t); // tapering as it reaches the tip
+        float nose_w = 4 + amp * Sin(angle*t); // tapering as it reaches the end
 
         glVertex3f(  -nose_w, point.y, point.z);
-        // right vertex
         glVertex3f(  nose_w, point.y, point.z);
     }
     glEnd();
@@ -185,11 +178,10 @@ void CarMonocoque()
         Vec2 point1 = GetPoint_Bezier(Monocoque_CP_Down, 5, t);
         Vec2 point2 = GetPoint_Bezier(Monocoque_CP_Top, 6, t);
 
-        float nose_w = 4 + amp * Sin(angle*t); // tapering as it reaches the tip
+        float nose_w = 4 + amp * Sin(angle*t); // tapering as it reaches the end
 
         glVertex3f(  nose_w, point1.y, point1.z);
         glVertex3f(  nose_w, point2.y, point2.z);
-        // right vertex
     }
     glEnd();
 
@@ -200,11 +192,10 @@ void CarMonocoque()
         Vec2 point1 = GetPoint_Bezier(Monocoque_CP_Down, 5, t);
         Vec2 point2 = GetPoint_Bezier(Monocoque_CP_Top, 6, t);
 
-        float nose_w = 4 + amp * Sin(angle*t); // tapering as it reaches the tip
+        float nose_w = 4 + amp * Sin(angle*t); // tapering as it reaches the end
 
         glVertex3f(  -nose_w, point1.y, point1.z);
         glVertex3f(  -nose_w, point2.y, point2.z);
-        // right vertex
     }
 
     glEnd();
@@ -218,10 +209,8 @@ void CarMonocoque()
 
 void WheelRod(double x, double y, double z, double phi, double theta, double ro, double h)
 {
-    //left
-    //  Save transformation
+
     glPushMatrix();
-    //  Offset and scale
     float r = 0.5;
     glTranslated(x,y,z);
     glRotated(phi, 1,0,0);
@@ -229,10 +218,7 @@ void WheelRod(double x, double y, double z, double phi, double theta, double ro,
     glRotated(ro, 0,0,1);
     glScaled(r,1.0,r);
 
-    
-
-    //    int ph = 0;
-
+    glColor3f(0.0, 0.7, 0.7);
     glBegin(GL_QUAD_STRIP);
     for (int th=0;th<=360;th+=30)
     {
@@ -242,20 +228,16 @@ void WheelRod(double x, double y, double z, double phi, double theta, double ro,
     glEnd();
     
 
-    //  Undo transformations
     glPopMatrix();
 }
 
 void WheelStrip(double x, double y, double z, double h, double r)
 {
-    //left
-        //  Save transformation
+
     glPushMatrix();
-    //  Offset and scale
 
     glTranslated(x,y,z);
-    // glRotated(ro, 0,0,1);
-    // glScaled(1.0,r,r);
+
 
     glColor3f(0.3,0.3,0.3);
     glBegin(GL_QUAD_STRIP);
@@ -282,7 +264,6 @@ void WheelStrip(double x, double y, double z, double h, double r)
     glEnd();
     
 
-    //  Undo transformations
     glPopMatrix();
 }
 

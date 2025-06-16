@@ -49,6 +49,13 @@ void PlaneNoColor(int type,
 
 }
 
+
+/*
+ *
+ *  Note: This function is Taken from the example file provided in class.
+ *
+ */
+
 void cube(double x,double y,double z,
     double dx,double dy,double dz,
     double th)
@@ -192,18 +199,12 @@ void GridPosMarkers(double h, double w)
 
 void cylinder(double x, double y, double z, double h, double ro)
 {
-    //left
-        //  Save transformation
+
     glPushMatrix();
-    //  Offset and scale
 
     glTranslated(x,y,z);
     glRotated(ro, 0,0,1);
     glScaled(0.25,1.0,0.25);
-
-    
-
-    //    int ph = 0;
 
     glBegin(GL_QUAD_STRIP);
     for (int th=0;th<=360;th+=30)
@@ -231,18 +232,17 @@ void GrandStand(double h, double w, double side_walk_w)
     int height = 1;
     int length = h;
     int i =0;
-    //Right Grand Stand
-    // for(i = 1; i< 10;i++)
-    // {
-    //     if (i%2 == 0)
-    //         glColor3f(0.5,0.5,0.5);
-    //     else
-    //         glColor3f(0.6,0.6,0.6);
-        
-    //     cube(w/2+side_walk_w+ (2*(i-1)+1)*width, i*height, 0, width, i*height, length/2,0 );
-    // }
 
-    
+    //Right Grand Stand
+    for(i = 1; i< 10;i++)
+    {
+        if (i%2 == 0)
+            glColor3f(0.5,0.5,0.5);
+        else
+            glColor3f(0.6,0.6,0.6);
+        
+        cube(w/2+side_walk_w+ (2*(i-1)+1)*width, i*height, 0, width, i*height, length/2,0 );
+    }
 
     //Left Grand Stand
     for(i = 1; i<10;i++)
@@ -297,7 +297,6 @@ void circle(double x, double y, double z, double r)
     glEnd();
     
 
-    //  Undo transformations
     glPopMatrix();
 }
 

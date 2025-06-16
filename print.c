@@ -1,5 +1,6 @@
-//  CSCIx239 library
-//  Willem A. (Vlakkies) Schreuder
+//  CSCI5239 library
+//  Taken from example 12.
+ 
 #include "CSCI5229.h"
 
 //

@@ -1,5 +1,7 @@
-#ifndef CSCIx229
-#define CSCIx229
+// This Header file is taken from example 12 and modified according to mt requirement.
+
+#ifndef CSCI5229
+#define CSCI5229
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -54,15 +56,10 @@ extern "C" {
 
 #ifdef __GNUC__
 void Print(const char* format , ...) __attribute__ ((format(printf,1,2)));
-// void Fatal(const char* format , ...) __attribute__ ((format(printf,1,2))) __attribute__ ((noreturn));
 #else
 void Print(const char* format , ...);
-// void Fatal(const char* format , ...);
 #endif
-// unsigned int LoadTexBMP(const char* file);
-// void Project(double fov,double asp,double dim);
-// void ErrCheck(const char* where);
-// int  LoadOBJ(const char* file);
+void ErrCheck(const char* where);
 
 #ifdef __cplusplus
 }

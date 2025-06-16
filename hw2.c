@@ -10,35 +10,26 @@ int mode=1;       //  Projection mode
 int fov=55;       //  Field of view (for perspective)
 double asp=1;     //  Aspect ratio
 
+int showCarOnly = 1;
 
 // First Person perspective Camera states
 
 float  camY = 10;
 float camAngle = 0;
 
-float camAngle_theta = 20;
-float camAngle_phi = 35;
-
-float moveStep = 1;
+float moveStep = 5;
 float turnStep = 2;
 
 float Ex, Ey, Ez = 0;
 
-// Helper Functions
+
+
 
 /*
  *
- *  Note: This function is Taken from the ex.c file provided in class.
+ *  Note: This function is Taken from the example file provided in class.
  *
- *  Check for OpenGL errors
  */
-void ErrCheck(const char* where)
-{
-   int err = glGetError();
-   if (err) fprintf(stderr,"ERROR: %s [%s]\n",gluErrorString(err),where);
-}
-
-
 static void Project()
 {
    //  Tell OpenGL we want to manipulate the projection matrix
@@ -46,9 +37,7 @@ static void Project()
    //  Undo previous transformations
    glLoadIdentity();
    //  Perspective transformation
-   if (mode==1)
-        gluPerspective(fov,asp,dim/10,10*dim);
-    else if (mode ==2)
+   if (mode==1 || mode ==2)
         gluPerspective(fov,asp,dim/10,10*dim);
    //  Orthogonal projection
    else
@@ -58,6 +47,7 @@ static void Project()
    //  Undo previous transformations
    glLoadIdentity();
 }
+
 
 void DrawScene()
 {
@@ -70,18 +60,11 @@ void DrawScene()
 
     double wall_width = width/16;
 
-    double pit_lane_w = 6*width/21;
 
     glEnable(GL_POLYGON_OFFSET_FILL);
     
     glPolygonOffset(1,1);
     Plane(GL_POLYGON, 0,0,0, 0, 0,0, 0.1, 0.1, 0.1, length*2.3, 6*width/7); // Road
-    Plane(GL_POLYGON, width/2+side_walk_w+ pit_lane_w/2, 0,0, 0,0,0, 0.2, 0.2, 0.2, length*1.5, pit_lane_w);
-
-    glPushMatrix();
-    glTranslatef(20,0,-15);
-    Plane(GL_POLYGON, width/3, 0, length - length/16 , -30, 0, 0, 0.2, 0.2, 0.2, length/2, 6*width/21);
-    glPopMatrix();
     
     glPolygonOffset(2,2);
     Plane(GL_POLYGON, 0,0,0, 0, 0,0, 0.1, 0.5, 0.12, length*2.3, width); // Grass
@@ -93,8 +76,6 @@ void DrawScene()
 
     Plane(GL_POLYGON, width/2+side_walk_w/2, 0, 0, 0,0,0,  0.8, 0.8, 0.8, length, side_walk_w);
     Plane(GL_POLYGON, -(width/2+side_walk_w/2), 0, 0, 0,0,0, 0.2, 0.2, 0.2, length, side_walk_w);
-
-    
 
 
     LightPoles(wall_width, width, length*2);
@@ -141,28 +122,29 @@ void display()
       glRotatef(theta,0,1,0);
    }
 
-    DrawScene();
+    if(showCarOnly != 0)
+        DrawScene(); // Renders the Scene
 
-    car();
+    car(); // Renders the car
     
 
     glColor3f(1,1,1);
     glBegin(GL_LINES);
     glVertex3d(0,0,0);
-    glVertex3d(1,0,0);
+    glVertex3d(50,0,0);
     glVertex3d(0,0,0);
-    glVertex3d(0,1,0);
+    glVertex3d(0,50,0);
     glVertex3d(0,0,0);
-    glVertex3d(0,0,1);
+    glVertex3d(0,0,50);
     glEnd();
 
-    glRasterPos3d(1,0,0);
+    glRasterPos3d(50,0,0);
     Print("X");
 
-    glRasterPos3d(0,1,0);
+    glRasterPos3d(0,50,0);
     Print("Y");
 
-    glRasterPos3d(0,0,1);
+    glRasterPos3d(0,0,50);
     Print("Z");
 
     glWindowPos2i(5,5);
@@ -175,7 +157,7 @@ void display()
 
 
 /*
- *  Note: This function is Taken from the ex7.c file provided in class.
+ *  Note: This function is Taken from the ex7.c file provided in class and modified according to my requirement.
  *
  *  GLUT calls this routine when an arrow key is pressed
  */
@@ -246,24 +228,29 @@ void reshape(int width,int height)
 
 void key(unsigned char ch, int x, int y)
 {
-    //  Exit on ESC
-    if (ch == 27)
+    
+    if (ch == 27)   //  Exit on ESC
         exit(0);
-    //  Reset view angle
-    else if (ch == '0')
+
+    
+    else if (ch == '0') //  Reset view angle
         theta = phi = 0;
-    //  Switch display mode
-    else if (ch == 'm' || ch == 'M')
+
+    
+    else if (ch == 'm' || ch == 'M') //  Switch display mode
     {   if (mode == 2)
         {
-            double yaw   = RAD2DEG(atan2(Ex, Ez)) ;    // degrees
-            double pitch = RAD2DEG(atan2(y, sqrt(Ex*Ex+Ez*Ez))) ; // degrees
+            double theta_new   = RAD2DEG(atan2(Ex, Ez)) ;    // degrees
+            double phi_new = RAD2DEG(atan2( sqrt(Ex*Ex+Ez*Ez), y)) ; // degrees
 
-            theta = (int)yaw %360;
-            phi = (int)pitch %360;
+            theta = (int)theta_new;
+            phi = (int)phi_new ;
         }
         mode = (mode+1)%3;
     }
+
+    else if(ch == 's' || ch =='S')
+        showCarOnly = (showCarOnly+1)%2;
         
 
     //  Change field of view angle
@@ -272,11 +259,6 @@ void key(unsigned char ch, int x, int y)
     else if (ch == '+' && ch<179)
         fov++;
 
-
-    else if(ch =='a' || ch =='A')
-        theta -= turnStep;
-    else if(ch =='d' || ch =='D')
-        theta += turnStep;
     //  Reproject
     Project();
     //  Tell GLUT it is necessary to redisplay the scene
