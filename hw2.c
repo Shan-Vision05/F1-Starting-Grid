@@ -63,7 +63,7 @@ void DrawScene()
     glEnable(GL_POLYGON_OFFSET_FILL);
     
     glPolygonOffset(1,1);
-    Plane(GL_POLYGON, 0,0,0, 0, 0,0, 0.2, 0.2, 0.2, length*2.3, 6*width/7); // Road
+    Plane(GL_POLYGON, 0,0,0, 0, 0,0, 0.1, 0.1, 0.1, length*2.3, 6*width/7); // Road
     Plane(GL_POLYGON, width/2+side_walk_w+ pit_lane_w/2, 0,0, 0,0,0, 0.2, 0.2, 0.2, length*1.5, pit_lane_w);
 
     glPushMatrix();
