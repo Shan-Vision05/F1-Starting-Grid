@@ -28,10 +28,12 @@ hw2.o: hw2.c CSCI5229.h objects.h
 objects.o: objects.c CSCI5229.h objects.h
 car.o: car.c CSCI5229.h objects.h
 print.o: print.c CSCI5229.h
-errcheck.0: errcheck.c
+errcheck.o: errcheck.c CSCI5229.h
+loadtexbmp.o: loadtexbmp.c CSCI5229.h
+fatal.o: fatal.c CSCI5229.h
 
 # Create archive
-CSCI5229.a:print.o
+CSCI5229.a:print.o loadtexbmp.o errcheck.o fatal.o
 	ar -rcs $@ $^
 
 # Compile rules
@@ -41,7 +43,7 @@ CSCI5229.a:print.o
 	g++ -c $(CFLG)  $<
 
 #  Link
-hw2:hw2.o CSCI5229.a objects.o car.o errcheck.o
+hw2:hw2.o CSCI5229.a objects.o car.o
 	gcc $(CFLG) -o $@ $^  $(LIBS)
 
 #  Clean

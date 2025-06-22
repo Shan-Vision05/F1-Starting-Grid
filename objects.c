@@ -7,15 +7,25 @@ void Plane(int type,
     double r, double g, double b,
     double h, double w)
 {
-    glPushMatrix();
+    
+    // float yellow[]   = {1.0,1.0,0.0,1.0};
+    float white[] = {1,1,1,1};
+    float black[] = {0,0,0,1};
+    glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE, white);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,black);
 
+    glPushMatrix();
+    glColor3f(r, g, b);
     glTranslated(x, y, z);
     glRotated(pi, 1, 0, 0);
     glRotated(th, 0, 1, 0);
     glRotated(ro, 0, 0, 1);
 
-    glColor3f(r, g, b);
+    
     glBegin(type);
+    glNormal3f(0,1,0);
     glVertex3f(-w/2,0,h/2);
     glVertex3f(w/2,0,h/2);
     glVertex3f(w/2, 0, -h/2);
@@ -31,6 +41,13 @@ void PlaneNoColor(int type,
     double th, double pi, double ro,
     double h, double w)
 {
+    float white[] = {1,1,1,1};
+    float black[] = {0,0,0,1};
+    glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE, white);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,black);
+
     glPushMatrix();
 
     glTranslated(x, y, z);
@@ -39,6 +56,7 @@ void PlaneNoColor(int type,
     glRotated(ro, 0, 0, 1);
 
     glBegin(type);
+    glNormal3f(0,1,0);
     glVertex3f(-w/2,0,h/2);
     glVertex3f(w/2,0,h/2);
     glVertex3f(w/2, 0, -h/2);
@@ -70,31 +88,37 @@ glScaled(dx,dy,dz);
 glBegin(GL_QUADS);
 //  Front
 // glColor3f(1,0,0);
+glNormal3f(0,0,1);
 glVertex3f(-1,-1, 1);
 glVertex3f(+1,-1, 1);
 glVertex3f(+1,+1, 1);
 glVertex3f(-1,+1, 1);
 //  Back
+glNormal3f(0,0,-1);
 glVertex3f(+1,-1,-1);
 glVertex3f(-1,-1,-1);
 glVertex3f(-1,+1,-1);
 glVertex3f(+1,+1,-1);
 //  Right
+glNormal3f(1,0,0);
 glVertex3f(+1,-1,+1);
 glVertex3f(+1,-1,-1);
 glVertex3f(+1,+1,-1);
 glVertex3f(+1,+1,+1);
 //  Left
+glNormal3f(-1,0,0);
 glVertex3f(-1,-1,-1);
 glVertex3f(-1,-1,+1);
 glVertex3f(-1,+1,+1);
 glVertex3f(-1,+1,-1);
 //  Topfrom image
+glNormal3f(0,1,0);
 glVertex3f(-1,+1,+1);
 glVertex3f(+1,+1,+1);
 glVertex3f(+1,+1,-1);
 glVertex3f(-1,+1,-1);
 //  Bottom
+glNormal3f(0,-1,0);
 glVertex3f(-1,-1,-1);
 glVertex3f(+1,-1,-1);
 glVertex3f(+1,-1,+1);
@@ -103,6 +127,70 @@ glVertex3f(-1,-1,+1);
 glEnd();
 //  Undo transformations
 glPopMatrix();
+}
+
+void cubeWLight(double x,double y,double z,
+    double dx,double dy,double dz,
+    double th)
+{
+    float emCol[] = { 1.0, 1.0, 1.0, 1.0 };
+    // No emission
+    float noEm[] = { 0,0,0,1 };
+    //  Save transformation
+    glPushMatrix();
+    //  Offset
+    glTranslated(x,y,z);
+    glRotated(th,0,0,1);
+    glScaled(dx,dy,dz);
+    //  Cube
+    glBegin(GL_QUADS);
+    //  Front
+    // glColor3f(1,0,0);
+    glNormal3f(0,0,1);
+    glVertex3f(-1,-1, 1);
+    glVertex3f(+1,-1, 1);
+    glVertex3f(+1,+1, 1);
+    glVertex3f(-1,+1, 1);
+    //  Back
+    
+    glNormal3f(0,0,-1);
+    glVertex3f(+1,-1,-1);
+    glVertex3f(-1,-1,-1);
+    glVertex3f(-1,+1,-1);
+    glVertex3f(+1,+1,-1);
+    
+    //  Right
+    glNormal3f(1,0,0);
+    glVertex3f(+1,-1,+1);
+    glVertex3f(+1,-1,-1);
+    glVertex3f(+1,+1,-1);
+    glVertex3f(+1,+1,+1);
+    //  Left
+    glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,emCol);
+    glNormal3f(-1,0,0);
+    glVertex3f(-1,-1,-1);
+    glVertex3f(-1,-1,+1);
+    glVertex3f(-1,+1,+1);
+    glVertex3f(-1,+1,-1);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,noEm);
+    //  Topfrom image
+    glNormal3f(0,1,0);
+    glVertex3f(-1,+1,+1);
+    glVertex3f(+1,+1,+1);
+    glVertex3f(+1,+1,-1);
+    glVertex3f(-1,+1,-1);
+    //  Bottom
+    
+    glNormal3f(0,-1,0);
+    glVertex3f(-1,-1,-1);
+    glVertex3f(+1,-1,-1);
+    glVertex3f(+1,-1,+1);
+    glVertex3f(-1,-1,+1);
+    
+    //  End
+    glEnd();
+    //  Undo transformations
+    glPopMatrix();
 }
 
 void LightPole(double x,double y,double z,double r, double h, char side)
@@ -122,8 +210,9 @@ void LightPole(double x,double y,double z,double r, double h, char side)
     glBegin(GL_QUAD_STRIP);
     for (int th=0;th<=360;th+=30)
     {
-            glVertex3d(Cos(th),h,Sin(th));
-            glVertex3d(Cos(th),0,Sin(th));
+        glNormal3f(Cos(th), 0, Sin(th));
+        glVertex3d(Cos(th),h,Sin(th));
+        glVertex3d(Cos(th),0,Sin(th));
     }
     glEnd();
     
@@ -139,9 +228,9 @@ void LightPole(double x,double y,double z,double r, double h, char side)
 
     glColor3f(1,0,0);
     if (side == 'r')
-        cube(x_offset+x, y_offset+y,z, 0.25,head_size/2,head_size/4,70);
+        cubeWLight(x_offset+x, y_offset+y,z, 0.25,head_size/2,head_size/4,70);
     else
-        cube(-x_offset+x, y_offset,z, 0.25,head_size/2,head_size/4,110);
+        cubeWLight(-x_offset+x, y_offset,z, 0.25,head_size/2,head_size/4,110);
 }
 
 void LightPoles(double wall_w, double road_w, double road_l)
@@ -209,8 +298,9 @@ void cylinder(double x, double y, double z, double h, double ro)
     glBegin(GL_QUAD_STRIP);
     for (int th=0;th<=360;th+=30)
     {
-            glVertex3d(Cos(th),h,Sin(th));
-            glVertex3d(Cos(th),0,Sin(th));
+        glNormal3f(Cos(th),0,Sin(th));
+        glVertex3d(Cos(th),h,Sin(th));
+        glVertex3d(Cos(th),0,Sin(th));
     }
     glEnd();
     
@@ -233,13 +323,14 @@ void GrandStand(double h, double w, double side_walk_w)
     int length = h;
     int i =0;
 
+    glColor3f(0.5,0.5,0.5);
     //Right Grand Stand
     for(i = 1; i< 10;i++)
     {
-        if (i%2 == 0)
-            glColor3f(0.5,0.5,0.5);
-        else
-            glColor3f(0.6,0.6,0.6);
+        // if (i%2 == 0)
+        //     glColor3f(0.5,0.5,0.5);
+        // else
+        //     glColor3f(0.6,0.6,0.6);
         
         cube(w/2+side_walk_w+ (2*(i-1)+1)*width, i*height, 0, width, i*height, length/2,0 );
     }
@@ -247,15 +338,15 @@ void GrandStand(double h, double w, double side_walk_w)
     //Left Grand Stand
     for(i = 1; i<10;i++)
     {
-        if (i%2 == 0)
-            glColor3f(0.5,0.5,0.5);
-        else
-            glColor3f(0.6,0.6,0.6);
+        // if (i%2 == 0)
+        //     glColor3f(0.5,0.5,0.5);
+        // else
+        //     glColor3f(0.6,0.6,0.6);
         
         cube(-w/2-side_walk_w- (2*(i-1)+1)*width, i*height, 0, width, -i*height, length/2,0 );
     }
 
-    glColor3f(0.6,0.6,0.6);
+    // glColor3f(0.6,0.6,0.6);
     GrandStandPoles(w, side_walk_w, width, i, 0);
     GrandStandPoles(w, side_walk_w, width, i, -h/2+5);
     GrandStandPoles(w, side_walk_w, width, i, h/2-5);
@@ -270,9 +361,9 @@ void GrandStand(double h, double w, double side_walk_w)
     int y_offset = Cos(45)*roof_width/2;
     int x_offset = Sin(45)*roof_width/2;
 
-    glColor3f(0.5,0.5,0.5);
+    // glColor3f(0.5,0.5,0.5);
     cube(x,y,z, roof_width, 0.5, roof_len, 0);
-    glColor3f(0.6,0.6,0.6);
+    // glColor3f(0.6,0.6,0.6);
     cube(x+roof_width+x_offset/2,y -y_offset/2-0.5,z, roof_width/4, 0.5, roof_len, -45);
 
 }
@@ -291,8 +382,9 @@ void circle(double x, double y, double z, double r)
 
     glBegin(GL_TRIANGLE_FAN);
     for (int th=0;th<=360;th+=30)
-    {
-            glVertex3d(Cos(th),Sin(th),z);
+    {   
+        glNormal3f(Cos(th),Sin(th), 1);
+        glVertex3d(Cos(th),Sin(th),z);
     }
     glEnd();
     
@@ -312,14 +404,14 @@ void StartLight(double w, double h, double x_offset)
     glEnable(GL_POLYGON_OFFSET_FILL);
     
     glPolygonOffset(1,1);
-    glColor3f(0.0, 0.7, 0.7);
+    glColor3f(0.4, 0.4, 0.4);
     cube(x_offset,w/5-3, -h/2+0.5, 1,4,0.5, 0);
     glDisable(GL_POLYGON_OFFSET_FILL);
 }
 
 void StartLights(double h, double w)                                                         
 {   
-    glColor3f(0.0, 0.7, 0.7);
+    glColor3f(0.4, 0.4, 0.4);
     cylinder(-w/2,0, -h/2, w/5, 0);  
     cylinder(w/2,0, -h/2, w/5, 0);
 

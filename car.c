@@ -41,6 +41,13 @@ Vec2 Monocoque_CP_Down[5] ={
     {-34,0.5}
 };
 
+Vec3 cross(const Vec3 a, const Vec3 b) {
+    Vec3 c;
+    c.x = a.y*b.z - a.z*b.y;
+    c.y = a.z*b.x - a.x*b.z;
+    c.z = a.x*b.y - a.y*b.x;
+    return c;
+}
 
 
 Vec2 GetPoint_Bezier(const Vec2 *CP, size_t n, float t)
@@ -60,12 +67,25 @@ Vec2 GetPoint_Bezier(const Vec2 *CP, size_t n, float t)
     return tmp[0]; 
 }
 
-void CarNose()
+Vec2 GetTangent_Bezier(const Vec2 *CP, size_t n, float t)
 {
+    if (n < 2) return (Vec2){0,0};
+    size_t d = n - 1;
+    Vec2 tmp[d];
+    for (size_t i = 0; i < d; ++i) {
+        tmp[i].y = (CP[i+1].y - CP[i].y) * (float)d;
+        tmp[i].z = (CP[i+1].z - CP[i].z) * (float)d;
+    }
+    return GetPoint_Bezier(tmp, d, t);
+}
+
+void CarNose(double r, double g, double b)
+{   
+    //0.8, 0.1, 0.1
     glPushMatrix();
     glTranslated(0, 1, 0);
     int samples = 10;
-    glColor3f(0.8, 0.1, 0.1);
+    glColor3f(r, g, b);
     glBegin(GL_TRIANGLE_STRIP);
 
     //Top part of the Nose
@@ -73,9 +93,13 @@ void CarNose()
     {
         float t = (float)i / (float)samples;
         Vec2 point = GetPoint_Bezier(Nose_CP_Top, 7, t);
+        Vec2 d = GetTangent_Bezier(Nose_CP_Top, 7, t);
+        Vec3 T = {0.0, d.y, d.z};
+        Vec3 W = {-1.0, 0.0, 0.0};
+        Vec3 N = cross(W,T);
 
         float nose_w = 4 - 3 * t; // tapering as it reaches the tip
-
+        glNormal3f(N.x, N.y, N.z);
         glVertex3f(  -nose_w, point.y, point.z);
         glVertex3f(  nose_w, point.y, point.z);
     }
@@ -87,25 +111,31 @@ void CarNose()
     {
         float t = (float)i / (float)samples;
         Vec2 point = GetPoint_Bezier(Nose_CP_Down, 4, t);
-
+        Vec2 d = GetTangent_Bezier(Nose_CP_Down, 4, t);
+        Vec3 T = {0.0, d.y, d.z};
+        Vec3 W = {1.0, 0.0, 0.0};
+        Vec3 N = cross(W,T);
         float nose_w = 4 - 3 * t; // tapering as it reaches the tip
-
+        glNormal3f(N.x, N.y, N.z);
         glVertex3f(  -nose_w, point.y, point.z);
         glVertex3f(  nose_w, point.y, point.z);
     }
     glEnd();
 
-    glColor3f(0.6, 0.1, 0.1);
-    //Left Side of the nose
+    // //Left Side of the nose
     glBegin(GL_TRIANGLE_STRIP);
     for(int i=0;i<=samples;i++)
     {
         float t = (float)i / (float)samples;
         Vec2 point1 = GetPoint_Bezier(Nose_CP_Down, 4, t);
         Vec2 point2 = GetPoint_Bezier(Nose_CP_Top, 7, t);
+        Vec2 d = GetTangent_Bezier(Nose_CP_Top, 4, t);
+        Vec3 T = {0.0, d.y, d.z};
+        Vec3 W = {0.0, point2.y-point1.y, point2.z - point1.z};
+        Vec3 N = cross(W,T);
 
         float nose_w = 4 - 3 * t; // tapering as it reaches the tip
-
+        glNormal3f(N.x, N.y, N.z);
         glVertex3f(  nose_w, point1.y, point1.z);
         glVertex3f(  nose_w, point2.y, point2.z);
     }
@@ -117,9 +147,13 @@ void CarNose()
         float t = (float)i / (float)samples;
         Vec2 point1 = GetPoint_Bezier(Nose_CP_Down, 4, t);
         Vec2 point2 = GetPoint_Bezier(Nose_CP_Top, 7, t);
+        Vec2 d = GetTangent_Bezier(Nose_CP_Top, 4, t);
+        Vec3 T = {0.0, d.y, d.z};
+        Vec3 W = {0.0, point1.y-point2.y, point1.z - point2.z};
+        Vec3 N = cross(W,T);
 
         float nose_w = 4 - 3 * t; // tapering as it reaches the tip
-
+        glNormal3f(N.x, N.y, N.z);
         glVertex3f(  -nose_w, point1.y, point1.z);
         glVertex3f(  -nose_w, point2.y, point2.z);
     }
@@ -131,12 +165,12 @@ void CarNose()
 }
 
 
-void CarMonocoque()
+void CarMonocoque(double r, double g, double b)
 {
     glPushMatrix();
     glTranslated(0, 1, 0);
     int samples = 10;
-    glColor3f(0.8, 0.1, 0.1);
+    glColor3f(r, g, b);
 
     int angle = 220;
     int amp = 5;
@@ -147,9 +181,14 @@ void CarMonocoque()
     {
         float t = (float)i / (float)samples;
         Vec2 point = GetPoint_Bezier(Monocoque_CP_Top, 6, t);
+        Vec2 d = GetTangent_Bezier(Monocoque_CP_Top, 6, t);
+        Vec3 T = {0.0, d.y, d.z};
+        Vec3 W = {1.0, 0.0, 0.0};
+        Vec3 N = cross(W,T);
 
+        
         float nose_w = 4 + amp * Sin(angle*t); // tapering as it reaches the end
-
+        glNormal3f(N.x, N.y, N.z);
         glVertex3f(  -nose_w, point.y, point.z);
         glVertex3f(  nose_w, point.y, point.z);
     }
@@ -161,25 +200,33 @@ void CarMonocoque()
     {
         float t = (float)i / (float)samples;
         Vec2 point = GetPoint_Bezier(Monocoque_CP_Down, 5, t);
+        Vec2 d = GetTangent_Bezier(Monocoque_CP_Down, 5, t);
+        Vec3 T = {0.0, d.y, d.z};
+        Vec3 W = {-1.0, 0.0, 0.0};
+        Vec3 N = cross(W,T);
 
         float nose_w = 4 + amp * Sin(angle*t); // tapering as it reaches the end
-
+        glNormal3f(N.x, N.y, N.z);
         glVertex3f(  -nose_w, point.y, point.z);
         glVertex3f(  nose_w, point.y, point.z);
     }
     glEnd();
 
-    glColor3f(0.6, 0.1, 0.1);
-    //Left Side of the nose
+    // //Left Side of the nose
     glBegin(GL_TRIANGLE_STRIP);
     for(int i=0;i<=samples;i++)
     {
         float t = (float)i / (float)samples;
         Vec2 point1 = GetPoint_Bezier(Monocoque_CP_Down, 5, t);
         Vec2 point2 = GetPoint_Bezier(Monocoque_CP_Top, 6, t);
+        Vec2 d = GetTangent_Bezier(Monocoque_CP_Top, 6, t);
+        Vec3 T = {0.0, d.y, d.z};
+        Vec3 W = {0.0, point1.y - point2.y, point1.z - point2.z};
+        Vec3 N = cross(W,T);
 
         float nose_w = 4 + amp * Sin(angle*t); // tapering as it reaches the end
 
+        glNormal3f(N.x, N.y, N.z);
         glVertex3f(  nose_w, point1.y, point1.z);
         glVertex3f(  nose_w, point2.y, point2.z);
     }
@@ -191,9 +238,13 @@ void CarMonocoque()
         float t = (float)i / (float)samples;
         Vec2 point1 = GetPoint_Bezier(Monocoque_CP_Down, 5, t);
         Vec2 point2 = GetPoint_Bezier(Monocoque_CP_Top, 6, t);
+        Vec2 d = GetTangent_Bezier(Monocoque_CP_Top, 6, t);
+        Vec3 T = {0.0, d.y, d.z};
+        Vec3 W = {0.0, point2.y - point1.y, point2.z - point1.z};
+        Vec3 N = cross(W,T);
 
         float nose_w = 4 + amp * Sin(angle*t); // tapering as it reaches the end
-
+        glNormal3f(N.x, N.y, N.z);
         glVertex3f(  -nose_w, point1.y, point1.z);
         glVertex3f(  -nose_w, point2.y, point2.z);
     }
@@ -221,7 +272,7 @@ void WheelRod(double x, double y, double z, double phi, double theta, double ro,
     glColor3f(0.0, 0.7, 0.7);
     glBegin(GL_QUAD_STRIP);
     for (int th=0;th<=360;th+=30)
-    {
+    {       glNormal3f(Cos(th),0,Sin(th));
             glVertex3d(Cos(th),0,Sin(th));
             glVertex3d(Cos(th),h,Sin(th));
     }
@@ -243,23 +294,26 @@ void WheelStrip(double x, double y, double z, double h, double r)
     glBegin(GL_QUAD_STRIP);
     for (int th=0;th<=360;th+=10)
     {
-            glVertex3d(h/2, r*Cos(th),r*Sin(th));
-            glVertex3d(-h/2, r*Cos(th), r*Sin(th));
+        glNormal3f(0, r*Cos(th),r*Sin(th));
+        glVertex3d(h/2, r*Cos(th),r*Sin(th));
+        glVertex3d(-h/2, r*Cos(th), r*Sin(th));
     }
     glEnd();
 
-    glColor3f(0.2,0.2,0.2);
+    // glColor3f(0.2,0.2,0.2);
     glBegin(GL_TRIANGLE_FAN);
     for (int th=0;th<=360;th+=10)
     {
-            glVertex3d(h/2, r*Cos(th),r*Sin(th));
+        glNormal3f(1,0,0);
+        glVertex3d(h/2, r*Cos(th),r*Sin(th));
     }
     glEnd();
-    glColor3f(0.2,0.2,0.2);
+    // glColor3f(0.2,0.2,0.2);
     glBegin(GL_TRIANGLE_FAN);
     for (int th=0;th<=360;th+=10)
     {
-            glVertex3d(-h/2, r*Cos(th),r*Sin(th));
+        glNormal3f(-1,0,0);
+        glVertex3d(-h/2, r*Cos(th),r*Sin(th));
     }
     glEnd();
     
@@ -284,15 +338,56 @@ void wheels()
 
 void car()
 {
+    // Car 1
     glPushMatrix();
 
-    glTranslated(0,1,0);
+    glTranslated(-20,1,15);
     glRotated(180, 0,1,0);
     glScaled(0.5,0.5,0.5);
-    wheels();
-    CarNose();
-    CarMonocoque();
 
+    CarNose(0.8, 0.1,0.1);
+    CarMonocoque(0.8,0.1,0.1);
+    wheels();
+
+    glPopMatrix();
+
+    // Car 2
+    glPushMatrix();
+
+    glTranslated(20,1,-30);
+    glRotated(180, 0,1,0);
+    glScaled(0.5,0.5,0.5);
+
+    CarNose(0.8, 0.1, 0.1);
+    CarMonocoque(0.8, 0.1, 0.1);
+    wheels();
+    
+    glPopMatrix();
+
+    // // Car 3
+    glPushMatrix();
+
+    glTranslated(20,1,30);
+    glRotated(180, 0,1,0);
+    glScaled(0.5,0.5,0.5);
+
+    CarNose(0.1, 0.8, 0.1);
+    CarMonocoque(0.1, 0.8, 0.1);
+    wheels();
+    
+    glPopMatrix();
+
+    // //Car 4
+    glPushMatrix();
+
+    glTranslated(-20,1,75);
+    glRotated(180, 0,1,0);
+    glScaled(0.5,0.5,0.5);
+
+    CarNose(0.1, 0.8, 0.1);
+    CarMonocoque(0.1, 0.8, 0.1);
+    wheels();
+    
     glPopMatrix();
 
 }

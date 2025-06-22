@@ -52,7 +52,7 @@ Aknowlegments:
 
 Code Structure:
 
-    1. The main entry point is the hw1.c, this is where all the objects are called and rendered.
+    1. The main entry point is the hw2.c, this is where all the objects are called and rendered.
 
     2. objects.c has all the scene related object creation code.
 

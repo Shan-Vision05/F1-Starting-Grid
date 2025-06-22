@@ -60,6 +60,13 @@ void Print(const char* format , ...) __attribute__ ((format(printf,1,2)));
 void Print(const char* format , ...);
 #endif
 void ErrCheck(const char* where);
+void Fatal(const char* format , ...);
+unsigned int LoadTexBMP(const char* file);
+extern float ambient;
+extern float diffuse;
+extern float specular;
+extern float emission;
+extern float shiny;
 
 #ifdef __cplusplus
 }

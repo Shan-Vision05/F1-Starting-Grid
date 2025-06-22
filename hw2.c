@@ -46,6 +46,25 @@ float turnStep = 2;
 
 float Ex, Ey, Ez = 0;
 
+// Lighting Pareameters
+
+int light = 1;
+float ambient = 15.0;
+float diffuse = 15.0;
+float specular = 35.0;
+float emission = 0;
+float shiny = 16;
+int shininess =   0;  // Shininess (power of two)
+
+float zh = 90.0;
+float ylight =50.0;
+float distance = 50.0;
+
+float light_z = 1;
+float light_x = 1;
+
+int move = 1;
+unsigned int texture[7]; // Texture names
 
 
 
@@ -70,6 +89,50 @@ static void Project()
    glMatrixMode(GL_MODELVIEW);
    //  Undo previous transformations
    glLoadIdentity();
+}
+
+/*
+ *  Draw vertex in polar coordinates with normal
+ */
+void Vertex(double th,double ph)
+{
+   double x = Sin(th)*Cos(ph);
+   double y = Cos(th)*Cos(ph);
+   double z =         Sin(ph);
+   //  For a sphere at the origin, the position
+   //  and normal vectors are the same
+   glNormal3d(x,y,z);
+   glVertex3d(x,y,z);
+}
+
+static void ball(double x,double y,double z,double r)
+{
+   //  Save transformation
+   glPushMatrix();
+   //  Offset, scale and rotate
+   glTranslated(x,y,z);
+   glScaled(r,r,r);
+   //  White ball with yellow specular
+   float yellow[]   = {1.0,1.0,0.0,1.0};
+   float Emission[] = {0.01*emission,0.01*emission,0.01*emission,1.0};
+   glColor3f(1,1,1);
+   glMaterialf(GL_FRONT,GL_SHININESS,shiny);
+   glMaterialfv(GL_FRONT,GL_SPECULAR,yellow);
+   glMaterialfv(GL_FRONT,GL_EMISSION,Emission);
+   //  Bands of latitude
+   int inc = 15;
+   for (int ph=-90;ph<90;ph+=inc)
+   {
+      glBegin(GL_QUAD_STRIP);
+      for (int th=0;th<=360;th+=2*inc)
+      {
+         Vertex(th,ph);
+         Vertex(th,ph+inc);
+      }
+      glEnd();
+   }
+   //  Undo transofrmations
+   glPopMatrix();
 }
 
 
@@ -106,7 +169,7 @@ void DrawScene()
 
     GrandStand(length, width, side_walk_w);
 
-    StartLights(length, width);
+    // StartLights(length, width);
 
 }
 
@@ -119,40 +182,77 @@ void display()
 
     glLoadIdentity();
 
-    
+        
 
-    if (mode==1) // Oblique overhead perspective;
-   {
-        Ex = -2*dim* Sin(theta) * Cos(phi);
-        Ey = +2*dim * Sin(phi);
-        Ez = +2*dim*Cos(theta)*Cos(phi);
-        gluLookAt(Ex,Ey,Ez , 0,0,0 , 0,Cos(phi),0);
-   }
-   else if(mode ==2) //First person perspective.
-   {
+        if (mode==1) // Oblique overhead perspective;
+    {
+            Ex = -2*dim* Sin(theta) * Cos(phi);
+            Ey = +2*dim * Sin(phi);
+            Ez = +2*dim*Cos(theta)*Cos(phi);
+            gluLookAt(Ex,Ey,Ez , 0,0,0 , 0,Cos(phi),0);
+    }
+    else if(mode ==2) //First person perspective.
+    {
 
-        float dx  =  Sin(camAngle);
-        float dz  = -Cos(camAngle);
+            float dx  =  Sin(camAngle);
+            float dz  = -Cos(camAngle);
 
-        gluLookAt(Ex, camY, Ez,
-            Ex+dx, camY, Ez+dz,
-            0,1,0);
+            gluLookAt(Ex, camY, Ez,
+                Ex+dx, camY, Ez+dz,
+                0,1,0);
 
-   }
-   //  Oblique overhead orthogonal;
-   else 
-   {
-      glRotatef(phi,1,0,0);
-      glRotatef(theta,0,1,0);
-   }
+    }
+    //  Oblique overhead orthogonal;
+    else 
+    {
+        glRotatef(phi,1,0,0);
+        glRotatef(theta,0,1,0);
+    }
+
+
+    // Adding Lighting to the scene
+    glShadeModel(GL_SMOOTH);
+    if (light==1)
+    {
+        float Ambient[] = {0.01*ambient, 0.01*ambient, 0.01*ambient, 1.0 };
+        float Diffuse[]   = {0.01*diffuse ,0.01*diffuse ,0.01*diffuse ,1.0};
+        float Specular[]  = {0.01*specular,0.01*specular,0.01*specular,1.0};
+        //  Light position
+        float Position[]  = {light_x*distance*Cos(zh),ylight, light_z*distance*Sin(zh),1.0};
+        
+        glColor3f(1,1,1);
+        ball(Position[0],Position[1],Position[2] , 1);
+        //  OpenGL should normalize normal vectors
+        glEnable(GL_NORMALIZE);
+        //  Enable lighting
+        glEnable(GL_LIGHTING);
+        //  Location of viewer for specular calculations
+        //glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER,local);
+        //  glColor sets ambient and diffuse color materials
+        glColorMaterial(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE);
+        glEnable(GL_COLOR_MATERIAL);
+        //  Enable light 0
+        glEnable(GL_LIGHT0);
+        //  Set ambient, diffuse, specular components and position of light 0
+        glLightfv(GL_LIGHT0,GL_AMBIENT ,Ambient);
+        glLightfv(GL_LIGHT0,GL_DIFFUSE ,Diffuse);
+        glLightfv(GL_LIGHT0,GL_SPECULAR,Specular);
+        glLightfv(GL_LIGHT0,GL_POSITION,Position);
+    }
+    else
+        glDisable(GL_LIGHTING);
 
     if(showCarOnly != 0)
         DrawScene(); // Renders the Scene
 
     car(); // Renders the car
+
+    // ball(-1,0,0 , 5);
     
     if(showAxis ==1)
-    {
+    {   
+        // Disabling lighting for axis
+        glDisable(GL_LIGHTING);
         glColor3f(1,1,1);
         glBegin(GL_LINES);
         glVertex3d(0,0,0);
@@ -181,6 +281,9 @@ void display()
     
     Print("View Angle=%d,%d  |  Camera Coordnates: (%.2f,%.2f,%.2f)  |  Mode= %s", phi, theta, Ex, y_coord, Ez,
         mode == 0? "Overhead Orthogonal": mode == 1?"Overhead Perspective":"First Person Perspective");
+
+    glWindowPos2i(5,25);
+    Print("Ambient=%.2f  Diffuse=%.2f Specular=%.2f Emission=%.2f Shininess=%.2f",ambient,diffuse,specular,emission,shiny);
 
     ErrCheck("display");
     glFlush();
@@ -257,6 +360,17 @@ void reshape(int width,int height)
    //  Set projection
    Project();
 }
+/*
+ *  GLUT calls this routine when the window is resized
+ */
+void idle()
+{
+   //  Elapsed time in seconds
+   double t = glutGet(GLUT_ELAPSED_TIME)/1000.0;
+   zh = fmod(90*t,360.0);
+   //  Tell GLUT it is necessary to redisplay the scene
+   glutPostRedisplay();
+}
 
 void key(unsigned char ch, int x, int y)
 {
@@ -284,21 +398,65 @@ void key(unsigned char ch, int x, int y)
         mode = (mode+1)%3;
     }
 
-    else if(ch == 's' || ch =='S')
-        showCarOnly = (showCarOnly+1)%2;
+    // else if(ch == 's' || ch =='S')
+    //     showCarOnly = (showCarOnly+1)%2;
 
-    else if(ch == 'a' || ch =='A')
-        showAxis = (showAxis+1)%2;
-        
+    // else if(ch == 'a' || ch =='A')
+    //     showAxis = (showAxis+1)%2;
+    else if (ch == 'i' || ch == 'I')
+      light = 1-light;
 
     //  Change field of view angle
     else if (ch == '-' && ch>1)
         fov--;
     else if (ch == '+' && ch<179)
         fov++;
+    else if (ch=='a' && ambient>0)
+        ambient -= 5;
+    else if (ch=='A' && ambient<100)
+        ambient += 5;
+    //  Diffuse level
+    else if (ch=='d' && diffuse>0)
+        diffuse -= 5;
+    else if (ch=='D' && diffuse<100)
+        diffuse += 5;
+    //  Specular level
+    else if (ch=='s' && specular>0)
+        specular -= 5;
+    else if (ch=='S' && specular<100)
+        specular += 5;
+    //  Emission level
+    else if (ch=='e' && emission>0)
+        emission -= 5;
+    else if (ch=='E' && emission<100)
+        emission += 5;
+    //  Shininess level
+    else if (ch=='n' && shininess>-1)
+        shininess -= 1;
+    else if (ch=='N' && shininess<7)
+        shininess += 1;
+    else if (ch == 'W' && light_x <=4.0)
+        light_x += 0.1;
+    else if (ch == 'w' && light_x > 0.0)
+        light_x -= 0.1;
+    else if (ch == 'L' && light_z <=8.0)
+        light_z += 0.1;
+    else if (ch == 'l' && light_z > 0.0)
+        light_z -= 0.1;
+    else if (ch == 'Y' && ylight <=100)
+        ylight += 5;
+    else if (ch == 'y' && ylight > -100)
+        ylight -= 5;
+
+
+    else if (ch == ' ')
+        move = 1-move;
+    
+    shiny = shininess<0 ? 0 : pow(2.0,shininess);
 
     //  Reproject
     Project();
+    glutIdleFunc(move?idle:NULL);
     //  Tell GLUT it is necessary to redisplay the scene
     glutPostRedisplay();
 }
@@ -324,6 +482,16 @@ int main(int argc, char* argv[])
     glutSpecialFunc(special);
 
     glutKeyboardFunc(key);
+
+    glutIdleFunc(idle);
+
+    texture[0] = LoadTexBMP("textures/asphalt_texture.bmp");
+    texture[1] = LoadTexBMP("textures/grass_512_24bpp.bmp");
+    texture[2] = LoadTexBMP("textures/marking_512_24bpp.bmp");
+    texture[3] = LoadTexBMP("textures/Rolex_Banner.bmp");
+    texture[4] = LoadTexBMP("textures/metal_pole_rusty_03.bmp");
+    texture[5] = LoadTexBMP("textures/OldIron01_512_24bpp.bmp");
+    texture[6] = LoadTexBMP("textures/glass.bmp");
 
     glutMainLoop();
 
