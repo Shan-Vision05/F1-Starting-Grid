@@ -79,13 +79,22 @@ Vec2 GetTangent_Bezier(const Vec2 *CP, size_t n, float t)
     return GetPoint_Bezier(tmp, d, t);
 }
 
-void CarNose(double r, double g, double b)
+void CarNose(double r, double g, double b, unsigned int tex_nose, unsigned int tex_side)
 {   
-    //0.8, 0.1, 0.1
+    float white[] = {1,1,1,1};
+    float black[] = {0,0,0,1};
+    glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE, white);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,black);
+
     glPushMatrix();
     glTranslated(0, 1, 0);
-    int samples = 10;
+    int samples = 50;
     glColor3f(r, g, b);
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, tex_nose);
     glBegin(GL_TRIANGLE_STRIP);
 
     //Top part of the Nose
@@ -100,11 +109,16 @@ void CarNose(double r, double g, double b)
 
         float nose_w = 4 - 3 * t; // tapering as it reaches the tip
         glNormal3f(N.x, N.y, N.z);
+        glTexCoord2f(0.2, (1-t));
         glVertex3f(  -nose_w, point.y, point.z);
+        glTexCoord2f(0.8, (1-t));
         glVertex3f(  nose_w, point.y, point.z);
     }
     glEnd();
+    glDisable(GL_TEXTURE_2D);
 
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, tex_side);
     // Bottom Part of the nose
     glBegin(GL_TRIANGLE_STRIP);
     for(int i=0;i<=samples;i++)
@@ -117,10 +131,16 @@ void CarNose(double r, double g, double b)
         Vec3 N = cross(W,T);
         float nose_w = 4 - 3 * t; // tapering as it reaches the tip
         glNormal3f(N.x, N.y, N.z);
+        glTexCoord2f(1, (1-t));
         glVertex3f(  -nose_w, point.y, point.z);
+        glTexCoord2f(0, (1-t));
         glVertex3f(  nose_w, point.y, point.z);
     }
     glEnd();
+    glDisable(GL_TEXTURE_2D);
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, tex_side);
 
     // //Left Side of the nose
     glBegin(GL_TRIANGLE_STRIP);
@@ -129,17 +149,26 @@ void CarNose(double r, double g, double b)
         float t = (float)i / (float)samples;
         Vec2 point1 = GetPoint_Bezier(Nose_CP_Down, 4, t);
         Vec2 point2 = GetPoint_Bezier(Nose_CP_Top, 7, t);
-        Vec2 d = GetTangent_Bezier(Nose_CP_Top, 4, t);
+        Vec2 d = GetTangent_Bezier(Nose_CP_Top, 7, t);
         Vec3 T = {0.0, d.y, d.z};
         Vec3 W = {0.0, point2.y-point1.y, point2.z - point1.z};
         Vec3 N = cross(W,T);
 
         float nose_w = 4 - 3 * t; // tapering as it reaches the tip
         glNormal3f(N.x, N.y, N.z);
+        glTexCoord2f( (1-t), 0.35);
         glVertex3f(  nose_w, point1.y, point1.z);
+        glTexCoord2f((1-t), 0.65);
         glVertex3f(  nose_w, point2.y, point2.z);
     }
     glEnd();
+    glDisable(GL_TEXTURE_2D);
+
+
+    glEnable(GL_TEXTURE_2D);
+
+    glBindTexture(GL_TEXTURE_2D, tex_side);
+    
 
     glBegin(GL_TRIANGLE_STRIP);
     for(int i=0;i<=samples;i++)
@@ -147,26 +176,37 @@ void CarNose(double r, double g, double b)
         float t = (float)i / (float)samples;
         Vec2 point1 = GetPoint_Bezier(Nose_CP_Down, 4, t);
         Vec2 point2 = GetPoint_Bezier(Nose_CP_Top, 7, t);
-        Vec2 d = GetTangent_Bezier(Nose_CP_Top, 4, t);
+        Vec2 d = GetTangent_Bezier(Nose_CP_Top, 7, t);
         Vec3 T = {0.0, d.y, d.z};
         Vec3 W = {0.0, point1.y-point2.y, point1.z - point2.z};
         Vec3 N = cross(W,T);
 
         float nose_w = 4 - 3 * t; // tapering as it reaches the tip
         glNormal3f(N.x, N.y, N.z);
+        glTexCoord2f( (1-t), 0.35);
         glVertex3f(  -nose_w, point1.y, point1.z);
+        glTexCoord2f( (1-t), 0.65);
         glVertex3f(  -nose_w, point2.y, point2.z);
     }
 
     glEnd();
+    glDisable(GL_TEXTURE_2D);
 
     
     glPopMatrix();
 }
 
 
-void CarMonocoque(double r, double g, double b)
+void CarMonocoque(double r, double g, double b, unsigned int tex_end, unsigned int tex_side, unsigned int text_red)
 {
+    float white[] = {1,1,1,1};
+    float black[] = {0,0,0,1};
+    glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE, white);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,black);
+
+
     glPushMatrix();
     glTranslated(0, 1, 0);
     int samples = 10;
@@ -174,6 +214,9 @@ void CarMonocoque(double r, double g, double b)
 
     int angle = 220;
     int amp = 5;
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, text_red);
+    
 
     glBegin(GL_TRIANGLE_STRIP);
     //Top part of the Nose
@@ -189,11 +232,16 @@ void CarMonocoque(double r, double g, double b)
         
         float nose_w = 4 + amp * Sin(angle*t); // tapering as it reaches the end
         glNormal3f(N.x, N.y, N.z);
+        glTexCoord2f( (1-t), 0.0);
         glVertex3f(  -nose_w, point.y, point.z);
+        glTexCoord2f( (1-t), 1.0);
         glVertex3f(  nose_w, point.y, point.z);
     }
     glEnd();
+    glDisable(GL_TEXTURE_2D);
 
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, text_red);
     // Bottom Part of the nose
     glBegin(GL_TRIANGLE_STRIP);
     for(int i=0;i<=samples;i++)
@@ -207,10 +255,17 @@ void CarMonocoque(double r, double g, double b)
 
         float nose_w = 4 + amp * Sin(angle*t); // tapering as it reaches the end
         glNormal3f(N.x, N.y, N.z);
+        glTexCoord2f( (1-t), 0.0);
         glVertex3f(  -nose_w, point.y, point.z);
+        glTexCoord2f( (1-t), 1.0);
         glVertex3f(  nose_w, point.y, point.z);
     }
     glEnd();
+    glDisable(GL_TEXTURE_2D);
+
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, tex_side);
 
     // //Left Side of the nose
     glBegin(GL_TRIANGLE_STRIP);
@@ -227,11 +282,16 @@ void CarMonocoque(double r, double g, double b)
         float nose_w = 4 + amp * Sin(angle*t); // tapering as it reaches the end
 
         glNormal3f(N.x, N.y, N.z);
+        glTexCoord2f( t, 0.0);
         glVertex3f(  nose_w, point1.y, point1.z);
+        glTexCoord2f( t, 1.0);
         glVertex3f(  nose_w, point2.y, point2.z);
     }
     glEnd();
+    glDisable(GL_TEXTURE_2D);
 
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, tex_side);
     glBegin(GL_TRIANGLE_STRIP);
     for(int i=0;i<=samples;i++)
     {
@@ -245,21 +305,31 @@ void CarMonocoque(double r, double g, double b)
 
         float nose_w = 4 + amp * Sin(angle*t); // tapering as it reaches the end
         glNormal3f(N.x, N.y, N.z);
+        glTexCoord2f( (1-t), 0.0);
         glVertex3f(  -nose_w, point1.y, point1.z);
+        glTexCoord2f( (1-t), 1.0);
         glVertex3f(  -nose_w, point2.y, point2.z);
     }
 
     glEnd();
+    glDisable(GL_TEXTURE_2D);
 
-    glColor3f(0.6, 0.1, 0.1);
-    cube(0,2,-35, 2, 1.5, 4, 0);
+    glColor3f(1, 1, 1);
+    cube(0,2,-35, 2, 1.5, 4, 0, tex_end);
 
     
     glPopMatrix();
 }
 
-void WheelRod(double x, double y, double z, double phi, double theta, double ro, double h)
+void WheelRod(double x, double y, double z, double phi, double theta, double ro, double h, unsigned int text_cf)
 {
+
+    float white[] = {1,1,1,1};
+    float black[] = {0,0,0,1};
+    glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE, white);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,black);
 
     glPushMatrix();
     float r = 0.5;
@@ -268,126 +338,130 @@ void WheelRod(double x, double y, double z, double phi, double theta, double ro,
     glRotated(theta, 0,1,0);
     glRotated(ro, 0,0,1);
     glScaled(r,1.0,r);
+    glColor3f(1, 1, 1);
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, text_cf);
 
-    glColor3f(0.0, 0.7, 0.7);
+    
     glBegin(GL_QUAD_STRIP);
     for (int th=0;th<=360;th+=30)
-    {       glNormal3f(Cos(th),0,Sin(th));
-            glVertex3d(Cos(th),0,Sin(th));
-            glVertex3d(Cos(th),h,Sin(th));
+    {       
+        float s = th / 360.0; 
+        glNormal3f(Cos(th),0,Sin(th));
+        glTexCoord2f(s, 1.0);
+        glVertex3d(Cos(th),0,Sin(th));
+        glTexCoord2f(s, 0.0);
+        glVertex3d(Cos(th),h,Sin(th));
     }
     glEnd();
+    glDisable(GL_TEXTURE_2D);
     
 
     glPopMatrix();
 }
 
-void WheelStrip(double x, double y, double z, double h, double r)
+void WheelStrip(double x, double y, double z, double h, double r, unsigned int tex_wheel, unsigned int text_rim)
 {
+    float white[] = {1,1,1,1};
+    float black[] = {0,0,0,1};
+    glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE, white);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,black);
 
     glPushMatrix();
 
     glTranslated(x,y,z);
 
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, tex_wheel);
 
-    glColor3f(0.3,0.3,0.3);
+    glColor3f(1,1,1);
     glBegin(GL_QUAD_STRIP);
     for (int th=0;th<=360;th+=10)
     {
+        float s = th / 360.0f;
         glNormal3f(0, r*Cos(th),r*Sin(th));
+
+        glTexCoord2f(s, 1.0);
         glVertex3d(h/2, r*Cos(th),r*Sin(th));
+
+        glTexCoord2f(s, 0.0);
         glVertex3d(-h/2, r*Cos(th), r*Sin(th));
     }
     glEnd();
 
-    // glColor3f(0.2,0.2,0.2);
+    glDisable(GL_TEXTURE_2D);
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, text_rim);
+
     glBegin(GL_TRIANGLE_FAN);
+    glNormal3f(1,0,0);
+    glTexCoord2f(0.5, 0.5);
+    glVertex3f(h/2, 0.0, 0.0);
+
+    
     for (int th=0;th<=360;th+=10)
     {
         glNormal3f(1,0,0);
+        glTexCoord2f((Cos(th) +1)*0.5, (Sin(th)+1)*0.5);
         glVertex3d(h/2, r*Cos(th),r*Sin(th));
     }
     glEnd();
-    // glColor3f(0.2,0.2,0.2);
+    glDisable(GL_TEXTURE_2D);
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, text_rim);
+
     glBegin(GL_TRIANGLE_FAN);
+    glNormal3f(1,0,0);
+    glTexCoord2f(0.5, 0.5);
+    glVertex3f(-h/2, 0.0, 0.0);
+    
     for (int th=0;th<=360;th+=10)
     {
         glNormal3f(-1,0,0);
+        glTexCoord2f((Cos(th) +1)*0.5, (Sin(th)+1)*0.5);
         glVertex3d(-h/2, r*Cos(th),r*Sin(th));
     }
     glEnd();
+    glDisable(GL_TEXTURE_2D);
     
 
     glPopMatrix();
 }
 
-void wheels()
+void wheels(unsigned int tex_wheel, unsigned int text_rim, unsigned int text_cf)
 {
-    WheelRod(10,4,9, 0,0,90, 20);
-    WheelRod(10, 4, -38, 0,0,90, 20);
+    WheelRod(10,4,9, 0,0,90, 20, text_cf);
+    WheelRod(10, 4, -38, 0,0,90, 20, text_cf);
     
-    WheelStrip(12,4,9, 8, 5);
-    WheelStrip(-12,4,9, 8, 5);
+    WheelStrip(12,4,9, 8, 5, tex_wheel, text_rim);
+    WheelStrip(-12,4,9, 8, 5, tex_wheel, text_rim);
 
-    WheelStrip(12,4,-38, 8, 5);
-    WheelStrip(-12,4,-38, 8, 5);
+    WheelStrip(12,4,-38, 8, 5, tex_wheel, text_rim);
+    WheelStrip(-12,4,-38, 8, 5, tex_wheel, text_rim);
 }
 
 
 
 
-void car()
+void car(unsigned int tex_end, unsigned int tex_wheel, unsigned int tex_rim, unsigned int tex_nose,
+        unsigned int tex_nose_side, unsigned int text_side_strip)
 {
     // Car 1
     glPushMatrix();
 
-    glTranslated(-20,1,15);
+    // glTranslated(-20,1,15);
+    glTranslated(0,1,0);
     glRotated(180, 0,1,0);
     glScaled(0.5,0.5,0.5);
 
-    CarNose(0.8, 0.1,0.1);
-    CarMonocoque(0.8,0.1,0.1);
-    wheels();
+    CarNose(0.8, 0.1,0.1, tex_nose, tex_nose_side);
+    CarMonocoque(0.8,0.1,0.1, tex_end, text_side_strip, tex_nose_side);
+    wheels(tex_wheel, tex_rim, tex_end);
 
-    glPopMatrix();
-
-    // Car 2
-    glPushMatrix();
-
-    glTranslated(20,1,-30);
-    glRotated(180, 0,1,0);
-    glScaled(0.5,0.5,0.5);
-
-    CarNose(0.8, 0.1, 0.1);
-    CarMonocoque(0.8, 0.1, 0.1);
-    wheels();
-    
-    glPopMatrix();
-
-    // // Car 3
-    glPushMatrix();
-
-    glTranslated(20,1,30);
-    glRotated(180, 0,1,0);
-    glScaled(0.5,0.5,0.5);
-
-    CarNose(0.1, 0.8, 0.1);
-    CarMonocoque(0.1, 0.8, 0.1);
-    wheels();
-    
-    glPopMatrix();
-
-    // //Car 4
-    glPushMatrix();
-
-    glTranslated(-20,1,75);
-    glRotated(180, 0,1,0);
-    glScaled(0.5,0.5,0.5);
-
-    CarNose(0.1, 0.8, 0.1);
-    CarMonocoque(0.1, 0.8, 0.1);
-    wheels();
-    
     glPopMatrix();
 
 }

@@ -34,10 +34,8 @@ int fov=55;       //  Field of view (for perspective)
 double asp=1;     //  Aspect ratio
 
 int showCarOnly = 1;
-int showAxis = 1;
 
 // First Person perspective Camera states
-
 float  camY = 10;
 float camAngle = 0;
 
@@ -49,22 +47,22 @@ float Ex, Ey, Ez = 0;
 // Lighting Pareameters
 
 int light = 1;
-float ambient = 15.0;
-float diffuse = 15.0;
-float specular = 35.0;
+float ambient = 40.0;
+float diffuse = 30.0;
+float specular = 50.0;
 float emission = 0;
-float shiny = 16;
-int shininess =   0;  // Shininess (power of two)
+float shiny = 1;
+int shininess =   0;  
 
 float zh = 90.0;
-float ylight =50.0;
+float ylight =35.0;
 float distance = 50.0;
 
-float light_z = 1;
-float light_x = 1;
+float light_z = 3.5;
+float light_x = 1.3;
 
 int move = 1;
-unsigned int texture[7]; // Texture names
+unsigned int texture[13]; // Texture names
 
 
 
@@ -92,6 +90,7 @@ static void Project()
 }
 
 /*
+ *  Note: This function is Taken from the example file provided in class.
  *  Draw vertex in polar coordinates with normal
  */
 void Vertex(double th,double ph)
@@ -105,6 +104,9 @@ void Vertex(double th,double ph)
    glVertex3d(x,y,z);
 }
 
+/*
+ *  Note: This function is inspired from the example file provided in class.
+ */
 static void ball(double x,double y,double z,double r)
 {
    //  Save transformation
@@ -113,11 +115,11 @@ static void ball(double x,double y,double z,double r)
    glTranslated(x,y,z);
    glScaled(r,r,r);
    //  White ball with yellow specular
-   float yellow[]   = {1.0,1.0,0.0,1.0};
+   float white[]   = {1.0,1.0,1.0,1.0};
    float Emission[] = {0.01*emission,0.01*emission,0.01*emission,1.0};
    glColor3f(1,1,1);
    glMaterialf(GL_FRONT,GL_SHININESS,shiny);
-   glMaterialfv(GL_FRONT,GL_SPECULAR,yellow);
+   glMaterialfv(GL_FRONT,GL_SPECULAR,white);
    glMaterialfv(GL_FRONT,GL_EMISSION,Emission);
    //  Bands of latitude
    int inc = 15;
@@ -143,7 +145,7 @@ void DrawScene()
     double width = 100.0;
     double side_walk_w = 10.0;
 
-    GridPosMarkers(length, width);
+    GridPosMarkers(length, width, texture[2]);
 
     double wall_width = width/16;
 
@@ -151,25 +153,25 @@ void DrawScene()
     glEnable(GL_POLYGON_OFFSET_FILL);
     
     glPolygonOffset(1,1);
-    Plane(GL_POLYGON, 0,0,0, 0, 0,0, 0.1, 0.1, 0.1, length*2.3, 6*width/7); // Road
+    Plane(GL_POLYGON, 0,0,0, 0, 0,0, 1, 1, 1, length*2.3, 6*width/7, texture[0], 10, 20, 1); // Road
     
     glPolygonOffset(2,2);
-    Plane(GL_POLYGON, 0,0,0, 0, 0,0, 0.1, 0.5, 0.12, length*2.3, width); // Grass
+    Plane(GL_POLYGON, 0,0,0, 0, 0,0, 0.1, 0.5, 0.12, length*2.3, width, texture[1], 12, 20, 1); // Grass
 
     glDisable(GL_POLYGON_OFFSET_FILL);
 
-    Plane(GL_POLYGON, -width/2,wall_width/2,0, 0, 0, 90, 0.5,0.5,0.5, length, wall_width); // Side Wall - Left
-    Plane(GL_POLYGON, width/2,wall_width/2,0, 0, 0, 90, 0.5,0.5,0.5, length, wall_width); // Side Wall - right
+    Plane(GL_POLYGON, -width/2,wall_width/2,0, 0, 0, 90, 0.5,0.5,0.5, length, wall_width,texture[3], 1, 15, 0); // Side Wall - Left
+    Plane(GL_POLYGON, width/2,wall_width/2,0, 0, 0, 90, 0.5,0.5,0.5, length, wall_width, texture[3], 1, 15, 1); // Side Wall - right
 
-    Plane(GL_POLYGON, width/2+side_walk_w/2, 0, 0, 0,0,0,  0.8, 0.8, 0.8, length, side_walk_w);
-    Plane(GL_POLYGON, -(width/2+side_walk_w/2), 0, 0, 0,0,0, 0.2, 0.2, 0.2, length, side_walk_w);
+    Plane(GL_POLYGON, width/2+side_walk_w/2, 0, 0, 0,0,0,  0.2, 0.2, 0.2, length, side_walk_w, texture[2], 2, 15, 1);
+    Plane(GL_POLYGON, -(width/2+side_walk_w/2), 0, 0, 0,0,0, 0.2, 0.2, 0.2, length, side_walk_w, texture[2], 2, 15, 1);
 
 
-    LightPoles(wall_width, width, length*2);
+    LightPoles(wall_width, width, length*2, texture[4], texture[5]);
 
-    GrandStand(length, width, side_walk_w);
+    GrandStand(length, width, side_walk_w, texture[4], texture[2], texture[5]);
 
-    // StartLights(length, width);
+    StartLights(length, width, texture[5], texture[6]);
 
 }
 
@@ -184,7 +186,7 @@ void display()
 
         
 
-        if (mode==1) // Oblique overhead perspective;
+    if (mode==1) // Oblique overhead perspective;
     {
             Ex = -2*dim* Sin(theta) * Cos(phi);
             Ey = +2*dim * Sin(phi);
@@ -227,7 +229,6 @@ void display()
         //  Enable lighting
         glEnable(GL_LIGHTING);
         //  Location of viewer for specular calculations
-        //glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER,local);
         //  glColor sets ambient and diffuse color materials
         glColorMaterial(GL_FRONT_AND_BACK,GL_AMBIENT_AND_DIFFUSE);
         glEnable(GL_COLOR_MATERIAL);
@@ -245,37 +246,30 @@ void display()
     if(showCarOnly != 0)
         DrawScene(); // Renders the Scene
 
-    car(); // Renders the car
+    car(texture[7], texture[8], texture[9], texture[10], texture[11], texture[12]); // Renders the car
 
-    // ball(-1,0,0 , 5);
-    
-    if(showAxis ==1)
-    {   
-        // Disabling lighting for axis
-        glDisable(GL_LIGHTING);
-        glColor3f(1,1,1);
-        glBegin(GL_LINES);
-        glVertex3d(0,0,0);
-        glVertex3d(50,0,0);
-        glVertex3d(0,0,0);
-        glVertex3d(0,50,0);
-        glVertex3d(0,0,0);
-        glVertex3d(0,0,50);
-        glEnd();
 
-        glRasterPos3d(50,0,0);
-        Print("X");
+    // Disabling lighting for axis
+    glDisable(GL_LIGHTING);
+    glColor3f(1,1,1);
+    glBegin(GL_LINES);
+    glVertex3d(0,0,0);
+    glVertex3d(50,0,0);
+    glVertex3d(0,0,0);
+    glVertex3d(0,50,0);
+    glVertex3d(0,0,0);
+    glVertex3d(0,0,50);
+    glEnd();
 
-        glRasterPos3d(0,50,0);
-        Print("Y");
+    glRasterPos3d(50,0,0);
+    Print("X");
 
-        glRasterPos3d(0,0,50);
-        Print("Z");
+    glRasterPos3d(0,50,0);
+    Print("Y");
 
-        
-    }
+    glRasterPos3d(0,0,50);
+    Print("Z");
 
-    
     glWindowPos2i(5,5);
     float y_coord = mode!=2? Ey:camY;
     
@@ -398,19 +392,14 @@ void key(unsigned char ch, int x, int y)
         mode = (mode+1)%3;
     }
 
-    // else if(ch == 's' || ch =='S')
-    //     showCarOnly = (showCarOnly+1)%2;
-
-    // else if(ch == 'a' || ch =='A')
-    //     showAxis = (showAxis+1)%2;
+    else if(ch == 'c' || ch =='C')
+        showCarOnly = (showCarOnly+1)%2;
+    
     else if (ch == 'i' || ch == 'I')
       light = 1-light;
 
     //  Change field of view angle
-    else if (ch == '-' && ch>1)
-        fov--;
-    else if (ch == '+' && ch<179)
-        fov++;
+    
     else if (ch=='a' && ambient>0)
         ambient -= 5;
     else if (ch=='A' && ambient<100)
@@ -451,6 +440,10 @@ void key(unsigned char ch, int x, int y)
 
     else if (ch == ' ')
         move = 1-move;
+    else if (ch == '-' && ch>1)
+        fov--;
+    else if (ch == '+' && ch<179)
+        fov++;
     
     shiny = shininess<0 ? 0 : pow(2.0,shininess);
 
@@ -469,7 +462,7 @@ int main(int argc, char* argv[])
 
     glutInitWindowSize(900, 900);
 
-    glutCreateWindow("Assignment 2: Shanmukha Vamshi Kuruba");
+    glutCreateWindow("Assignment 3: Shanmukha Vamshi Kuruba");
 
     #ifdef USEGLEW
     if (glewInit()!=GLEW_OK) Fatal("Error initializing GLEW\n");
@@ -488,10 +481,17 @@ int main(int argc, char* argv[])
     texture[0] = LoadTexBMP("textures/asphalt_texture.bmp");
     texture[1] = LoadTexBMP("textures/grass_512_24bpp.bmp");
     texture[2] = LoadTexBMP("textures/marking_512_24bpp.bmp");
-    texture[3] = LoadTexBMP("textures/Rolex_Banner.bmp");
+    texture[3] = LoadTexBMP("textures/rolex_logo.bmp");
     texture[4] = LoadTexBMP("textures/metal_pole_rusty_03.bmp");
     texture[5] = LoadTexBMP("textures/OldIron01_512_24bpp.bmp");
     texture[6] = LoadTexBMP("textures/glass.bmp");
+    texture[7] = LoadTexBMP("textures/carbon_fiber.bmp");
+    texture[8] = LoadTexBMP("textures/tire.bmp");
+    texture[9] = LoadTexBMP("textures/tire_rim.bmp");
+    texture[10] = LoadTexBMP("textures/ferrari_nose_texture.bmp");
+    texture[11] = LoadTexBMP("textures/glossy_ferrari_red_512x512.bmp");
+    texture[12] = LoadTexBMP("textures/sponsor_stripe_512x256.bmp");
+
 
     glutMainLoop();
 
