@@ -18,7 +18,7 @@ Key bindings
 
     a/A: Turn Axis on/off
 
-    s/S: View only the Car or View entire scene (acts as a toggle button)
+    c/C: View only the Car or View entire scene (acts as a toggle button)
 
     ESC: Exit
 
@@ -26,13 +26,35 @@ Key bindings
   
     +/- : to zoom out/zoom in when in Oblique overhead perspective or First person perspecive
 
+    a/A : to decrease and increase Ambient Lighting respectively
+
+    s/S : to decrease and increase Specular Lighting respectively
+
+    d/D : decrease and increase Diffusion Lighting respectively
+
+    e/E : decrease and increase Emmitance Lighting respectively
+
+    n/N : decrease and increase Shininess respectively
+
+    i/I : to turn on/off the lighting
+
+    y/Y: to decrease and increase the height of light source respectively
+
+    w/W: to decrease and increase the movement of light in X direction
+
+    l/L: to decrease and increase the movement of light in Z direction
+
+    ' ': Space bar press will stop the light at it's current position
+
 Instructions to Run:
 
     Navigate to the directory with the source code and run 
 
     1. make
 
-    2. ./hw2
+    2. ./hw3
+
+Note: I've observed best change to the shine of objects when shine is set to 8 or 16.
 
 Aknowlegments:
 
@@ -46,9 +68,13 @@ Aknowlegments:
 
     5. reshape(int, int): void, taken from and modified the dim value to fit my View.
 
-    6. I've referred to https://www.geeksforgeeks.org/dsa/cubic-bezier-curve-implementation-in-c/ for Bezier curve concept. What differs from the website, they only implemented for 3 control points. I have created a for loop to work for any number of points.
+    6. LoadTexBMP(const char* ): unsigned int , taken from  example.
 
-    7. Most of the fuctions have the basic building blocks inspired from examples
+    7. I've referred to https://www.geeksforgeeks.org/dsa/cubic-bezier-curve-implementation-in-c/ for Bezier curve concept. What differs from the website, they only implemented for 3 control points. I have created a for loop to work for any number of points.
+
+    8. Tangent equations were taken from this wiki page, https://en.wikipedia.org/wiki/B%C3%A9zier_curve
+
+    9. Most of the fuctions have the basic building blocks inspired from examples
 
 Code Structure:
 
@@ -62,4 +88,6 @@ Code Structure:
 
     5. errcheck.c has the function to catch errors.
 
-Time Taken for this assigment: ~ 20+ Hours (including all kinds of formatting, Trial & Error)
+    6. loadtexbmp.c has a function to load .bmp files as a texture
+
+Time Taken for this assigment: ~ 15+ Hours (including all kinds of formatting, Trial & Error)

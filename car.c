@@ -50,15 +50,15 @@ Vec3 cross(const Vec3 a, const Vec3 b) {
 }
 
 
-Vec2 GetPoint_Bezier(const Vec2 *CP, size_t n, float t)
+Vec2 GetPoint_Bezier(const Vec2 *CP, int n, float t)
 {
     // Gives us the point on the Bezier curve at time step t
     Vec2 tmp[n];
-    for(size_t i=0; i<n; ++i)
+    for(int i=0; i<n; ++i)
         tmp[i] = CP[i];
 
-    for(size_t k=1; k<n; ++k){
-        for(size_t i=0; i<n-k; ++i){
+    for(int k=1; k<n; ++k){
+        for(int i=0; i<n-k; ++i){
             float u = 1 - t;
             tmp[i].z = u*tmp[i].z + t*tmp[i+1].z;
             tmp[i].y = u*tmp[i].y + t*tmp[i+1].y;
@@ -67,12 +67,12 @@ Vec2 GetPoint_Bezier(const Vec2 *CP, size_t n, float t)
     return tmp[0]; 
 }
 
-Vec2 GetTangent_Bezier(const Vec2 *CP, size_t n, float t)
+Vec2 GetTangent_Bezier(const Vec2 *CP, int n, float t)
 {
     if (n < 2) return (Vec2){0,0};
-    size_t d = n - 1;
+    int d = n - 1;
     Vec2 tmp[d];
-    for (size_t i = 0; i < d; ++i) {
+    for (int i = 0; i < d; ++i) {
         tmp[i].y = (CP[i+1].y - CP[i].y) * (float)d;
         tmp[i].z = (CP[i+1].z - CP[i].z) * (float)d;
     }

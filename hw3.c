@@ -10,15 +10,33 @@
 *                 
 *   0: Reset View Angle
 *
-*   a/A: Turn Axis on/off
-*
-*   s/S: View only the Car or View entire scene (acts as a toggle button)
+*   c/C: View only the Car or View entire scene (acts as a toggle button)
 *
 *   ESC: Exit
 *
 *   m/M: swicth between (Oblique Overhead Perspective, Orthogonal and First Person Perspective Projection)
 *  
 *   +/- : to zoom out/zoom in when in Oblique overhead perspective or First person perspecive
+*
+*   a/A : to decrease and increase Ambient Lighting respectively
+*  
+*   s/S : to decrease and increase Specular Lighting respectively
+*
+*   d/D : decrease and increase Diffusion Lighting respectively
+*
+*   e/E : decrease and increase Emmitance Lighting respectively
+*
+*   n/N : decrease and increase Shininess respectively
+*
+*   i/I : to turn on/off the lighting
+*
+*   y/Y: to decrease and increase the height of light source respectively
+*
+*   w/W: to decrease and increase the movement of light in X direction
+*
+*   l/L: to decrease and increase the movement of light in Z direction
+*
+*   ' ': Space bar press will stop the light at it's current position
 */
 
 #include "CSCI5229.h"
@@ -51,7 +69,7 @@ float ambient = 40.0;
 float diffuse = 30.0;
 float specular = 50.0;
 float emission = 0;
-float shiny = 1;
+float shiny = 0;
 int shininess =   0;  
 
 float zh = 90.0;
