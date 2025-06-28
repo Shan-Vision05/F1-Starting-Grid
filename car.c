@@ -142,27 +142,29 @@ void CarNose(double r, double g, double b, unsigned int tex_nose, unsigned int t
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, tex_side);
 
-    // //Left Side of the nose
-    glBegin(GL_TRIANGLE_STRIP);
-    for(int i=0;i<=samples;i++)
-    {
-        float t = (float)i / (float)samples;
-        Vec2 point1 = GetPoint_Bezier(Nose_CP_Down, 4, t);
-        Vec2 point2 = GetPoint_Bezier(Nose_CP_Top, 7, t);
-        Vec2 d = GetTangent_Bezier(Nose_CP_Top, 7, t);
-        Vec3 T = {0.0, d.y, d.z};
-        Vec3 W = {0.0, point2.y-point1.y, point2.z - point1.z};
-        Vec3 N = cross(W,T);
-
-        float nose_w = 4 - 3 * t; // tapering as it reaches the tip
-        glNormal3f(N.x, N.y, N.z);
-        glTexCoord2f( (1-t), 0.35);
-        glVertex3f(  nose_w, point1.y, point1.z);
-        glTexCoord2f((1-t), 0.65);
-        glVertex3f(  nose_w, point2.y, point2.z);
-    }
-    glEnd();
-    glDisable(GL_TEXTURE_2D);
+     // //Left Side of the nose
+     glBegin(GL_TRIANGLE_STRIP);
+     for(int i=0;i<=samples;i++)
+     {
+         float t = (float)i / (float)samples;
+         Vec2 point1 = GetPoint_Bezier(Nose_CP_Down, 4, t);
+         Vec2 point2 = GetPoint_Bezier(Nose_CP_Top, 7, t);
+         Vec2 d = GetTangent_Bezier(Nose_CP_Top, 7, t);
+         float nose_w = 4 - 3 * t; // tapering as it reaches the tip
+ 
+         Vec3 T = {-3, d.y, d.z};
+         Vec3 W = {0.0, point2.y-point1.y, point2.z - point1.z};
+         Vec3 N = cross(W,T);
+ 
+         
+         glNormal3f(N.x, N.y, N.z);
+         glTexCoord2f( (1-t), 0.35);
+         glVertex3f(  nose_w, point1.y, point1.z);
+         glTexCoord2f((1-t), 0.65);
+         glVertex3f(  nose_w, point2.y, point2.z);
+     }
+     glEnd();
+     glDisable(GL_TEXTURE_2D);
 
 
     glEnable(GL_TEXTURE_2D);
