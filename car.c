@@ -179,11 +179,12 @@ void CarNose(double r, double g, double b, unsigned int tex_nose, unsigned int t
         Vec2 point1 = GetPoint_Bezier(Nose_CP_Down, 4, t);
         Vec2 point2 = GetPoint_Bezier(Nose_CP_Top, 7, t);
         Vec2 d = GetTangent_Bezier(Nose_CP_Top, 7, t);
-        Vec3 T = {0.0, d.y, d.z};
+        float nose_w = 4 - 3 * t; // tapering as it reaches the tip
+        Vec3 T = {3, d.y, d.z};
         Vec3 W = {0.0, point1.y-point2.y, point1.z - point2.z};
         Vec3 N = cross(W,T);
 
-        float nose_w = 4 - 3 * t; // tapering as it reaches the tip
+        
         glNormal3f(N.x, N.y, N.z);
         glTexCoord2f( (1-t), 0.35);
         glVertex3f(  -nose_w, point1.y, point1.z);
@@ -277,11 +278,15 @@ void CarMonocoque(double r, double g, double b, unsigned int tex_end, unsigned i
         Vec2 point1 = GetPoint_Bezier(Monocoque_CP_Down, 5, t);
         Vec2 point2 = GetPoint_Bezier(Monocoque_CP_Top, 6, t);
         Vec2 d = GetTangent_Bezier(Monocoque_CP_Top, 6, t);
-        Vec3 T = {0.0, d.y, d.z};
+
+        float nose_w = 4 + amp * Sin(angle*t); // tapering as it reaches the end
+        float dx = amp * angle * (3.14159/180) * Cos(angle*t);
+
+        Vec3 T = {dx, d.y, d.z};
         Vec3 W = {0.0, point1.y - point2.y, point1.z - point2.z};
         Vec3 N = cross(W,T);
 
-        float nose_w = 4 + amp * Sin(angle*t); // tapering as it reaches the end
+        
 
         glNormal3f(N.x, N.y, N.z);
         glTexCoord2f( t, 0.0);
@@ -301,11 +306,13 @@ void CarMonocoque(double r, double g, double b, unsigned int tex_end, unsigned i
         Vec2 point1 = GetPoint_Bezier(Monocoque_CP_Down, 5, t);
         Vec2 point2 = GetPoint_Bezier(Monocoque_CP_Top, 6, t);
         Vec2 d = GetTangent_Bezier(Monocoque_CP_Top, 6, t);
-        Vec3 T = {0.0, d.y, d.z};
+        float nose_w = 4 + amp * Sin(angle*t); // tapering as it reaches the end
+        float dx = amp * angle * (3.14159/180) * Cos(angle*t);
+
+        Vec3 T = {-dx, d.y, d.z};
         Vec3 W = {0.0, point2.y - point1.y, point2.z - point1.z};
         Vec3 N = cross(W,T);
 
-        float nose_w = 4 + amp * Sin(angle*t); // tapering as it reaches the end
         glNormal3f(N.x, N.y, N.z);
         glTexCoord2f( (1-t), 0.0);
         glVertex3f(  -nose_w, point1.y, point1.z);
