@@ -54,7 +54,7 @@ double asp=1;     //  Aspect ratio
 int showCarOnly = 1;
 
 // First Person perspective Camera states
-float  camY = 10;
+float  camY = 1;
 float camAngle = 0;
 
 float moveStep = 5;
@@ -158,12 +158,20 @@ static void ball(double x,double y,double z,double r)
 
 void DrawScene()
 {
+    glPushMatrix();
     // Drawing Axis
     double length = 250.0;
     double width = 100.0;
     double side_walk_w = 10.0;
 
-    GridPosMarkers(length, width, texture[2]);
+    double road_width = 6*width/7;
+
+    
+    glScaled(0.1, 0.1, 0.1);
+    glTranslated(-2*width-width/2, 0, 0);
+
+    GridPosMarkers(0,0,0, length, width, texture[2]);
+    GridPosMarkers(0,0,0, length, width, texture[2]);
 
     double wall_width = width/16;
 
@@ -171,10 +179,23 @@ void DrawScene()
     glEnable(GL_POLYGON_OFFSET_FILL);
     
     glPolygonOffset(1,1);
-    Plane(GL_POLYGON, 0,0,0, 0, 0,0, 1, 1, 1, length*2.3, 6*width/7, texture[0], 10, 20, 1); // Road
+    Plane(GL_POLYGON, 0,0,0, 0, 0,0, 1, 1, 1, length*2.3, road_width, texture[0], 10, 20, 1); // Road
+    Plane(GL_POLYGON, 4*width+road_width,0,0, 0, 0,0, 1, 1, 1, length*2.3, road_width, texture[0], 10, 20, 1);
+    Arc(2*width+road_width/2, 0, -length*2.3/2, 2*width, 2*width + road_width, 180, 360, texture[0]);
+    Arc(2*width+road_width/2, 0, length*2.3/2, 2*width, 2*width + road_width, 180, 0, texture[0]);
+
+    double pitLane_ir = road_width - side_walk_w;
+
+    Plane(GL_POLYGON, road_width - side_walk_w ,0,0, 0, 0,0, 1, 1, 1, length*2, road_width/4, texture[0], 10, 20, 1); //Pit Lane
+    Arc(5*(pitLane_ir) + road_width/8, 0, -length*2/2, 4*pitLane_ir, 4*pitLane_ir + 20, 180, 240, texture[0]);
+    Arc(7*(pitLane_ir) + road_width/8, 0, length*2/2, 6*pitLane_ir, 6*pitLane_ir + 20, 180, 150, texture[0]);
+
+    
     
     glPolygonOffset(2,2);
-    Plane(GL_POLYGON, 0,0,0, 0, 0,0, 0.1, 0.5, 0.12, length*2.3, width, texture[1], 12, 20, 1); // Grass
+    Plane(GL_POLYGON, 0,0,0, 0, 0,0, 0.1, 0.5, 0.12, length*5, width, texture[1], 12, 20, 1); // Grass
+    Plane(GL_POLYGON, 4*width+width,0,0, 0, 0,0, 0.1, 0.5, 0.12, length*5, width, texture[1], 12, 20, 1); // Grass
+    Plane(GL_POLYGON, 2*width+width/2,0,0, 0, 0,0, 0.1, 0.5, 0.12, length*5, 4*width, texture[1], 12, 20, 1);
 
     glDisable(GL_POLYGON_OFFSET_FILL);
 
@@ -187,9 +208,15 @@ void DrawScene()
 
     LightPoles(wall_width, width, length*2, texture[4], texture[5]);
 
-    GrandStand(length, width, side_walk_w, texture[4], texture[2], texture[5]);
+    GrandStand(length, width, side_walk_w, texture[4], texture[2], texture[5], 4*width + road_width);
 
     StartLights(length, width, texture[5], texture[6]);
+
+    Garages(road_width,0,0, 20, texture[4]);
+
+    car(texture[7], texture[8], texture[9], texture[10], texture[11], texture[12]); 
+
+    glPopMatrix();
 
 }
 
@@ -263,8 +290,13 @@ void display()
 
     if(showCarOnly != 0)
         DrawScene(); // Renders the Scene
+    // Garages(0,0,0, 20, texture[5]);
+    
 
-    car(texture[7], texture[8], texture[9], texture[10], texture[11], texture[12]); // Renders the car
+    // glPushMatrix();
+    // glScaled(0.1, 0.1, 0.1);
+    // // Renders the car
+    // glPopMatrix();
 
 
     // Disabling lighting for axis

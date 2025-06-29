@@ -53,6 +53,52 @@ void Plane(int type,
 
 }
 
+
+void Arc(double x, double y, double z, double innerR, double outerR, double start_ang, double end_ang, unsigned int texture)
+{
+    float white[] = {1,1,1,1};
+    float black[] = {0,0,0,1};
+    glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE, white);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,black);
+
+
+    glPushMatrix();
+    glTranslated(x, y, z);
+    glColor3f(0.5, 0.5, 0.5);
+
+    glEnable(GL_TEXTURE_2D);
+    glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+    glBindTexture(GL_TEXTURE_2D,texture);
+
+    glBegin(GL_QUAD_STRIP);
+    int steps = 50;
+    for(int i=0; i<= steps; i++)
+    {
+        float t = (float) i/(float)steps;
+
+        float angle = start_ang + t*(end_ang - start_ang);
+
+        float xOuter = Cos(angle)*outerR;
+        float yOuter = Sin(angle)*outerR;
+        // point on inner circle
+        float xInner = Cos(angle)*innerR;
+        float yInner = Sin(angle)*innerR;
+        // order matters: inner, then outer (or vice versa) for a strip
+        glNormal3f(0.0, 1.0, 0.0);
+        glTexCoord2f(t, 0.0);
+        glVertex3f(xInner,0, yInner);
+        glTexCoord2f(t, 1.0);
+        glVertex3f(xOuter,0, yOuter);
+    }
+    glEnd();
+
+    glDisable(GL_TEXTURE_2D);
+    glPopMatrix();
+}
+
 void PlaneNoColor(int type, 
     double x, double y, double z,
     double th, double pi, double ro,
@@ -348,16 +394,19 @@ void GridPosMarker(double z, double h, double w, unsigned int texture)
     glPopMatrix();
 }
 
-void GridPosMarkers(double h, double w, unsigned int texture)
+void GridPosMarkers(double x, double y, double z, double h, double w, unsigned int texture)
 {
-    double z = h/1.2;
+    glPushMatrix();
+    glTranslated(x,y,z);
+    double z_val = h/1.2;
     int count = 0;
     while (count < 20)
     {
-        GridPosMarker(z, h, w, texture);
-        z-=30.0;
+        GridPosMarker(z_val, h, w, texture);
+        z_val-=30.0;
         count+=2;
     }
+    glPopMatrix();
 }
 
 void cylinder(double x, double y, double z, double h, double ro, unsigned int texture)
@@ -411,7 +460,7 @@ void GrandStandPoles(double w, double side_walk_w, double stand_seat_w, int i, d
     cylinder(-w/2-side_walk_w- stand_seat_w,0,z_offset, 40,0, texture);
 }
 
-void GrandStand(double h, double w, double side_walk_w, unsigned int tex_pole, unsigned int tex_seating, unsigned int text_roof)
+void GrandStand(double h, double w, double side_walk_w, unsigned int tex_pole, unsigned int tex_seating, unsigned int text_roof, double offset)
 {   int width = 2;
     int height = 1;
     int length = h;
@@ -421,7 +470,7 @@ void GrandStand(double h, double w, double side_walk_w, unsigned int tex_pole, u
     //Right Grand Stand
     for(i = 1; i< 10;i++)
     {        
-        cube(w/2+side_walk_w+ (2*(i-1)+1)*width, i*height, 0, width, i*height, length/2,0 , tex_seating);
+        cube(w/2+side_walk_w+ (2*(i-1)+1)*width + offset, i*height, 0, width, i*height, length/2,0 , tex_seating);
     }
 
     //Left Grand Stand
@@ -507,6 +556,7 @@ void StartLight(double w, double h, double x_offset, unsigned int texture, unsig
     glDisable(GL_POLYGON_OFFSET_FILL);
 }
 
+
 void StartLights(double h, double w, unsigned int texture, unsigned int tex_light)                                                         
 {   
     glColor3f(0.4, 0.4, 0.4);
@@ -526,3 +576,34 @@ void StartLights(double h, double w, unsigned int texture, unsigned int tex_ligh
     StartLight(w,h,-6, texture, tex_light);
 }
 
+
+void Garage(double x, double y, double z, double s, unsigned int texture)
+{
+    double wall_width = 0.05 * s;
+    glPushMatrix();
+    glTranslated(x,y,z);
+
+    cube(s,s/2, -s/2 -wall_width/2, s, s/2, wall_width, 0, texture);
+    cube(s,s/2, +s/2 +wall_width/2, s, s/2, wall_width, 0, texture);
+
+    cube(s, s-wall_width, 0, s, wall_width, s/2, 0, texture);
+
+    cube(2*s - wall_width,s/2,0, wall_width, s/2, s/2, 0, texture);
+    // Plane(GL_POLYGON, s, 0,s/2, 0, 0, 0,  )
+    Plane(GL_POLYGON, s, 0,0, 0, 0,0, 1, 1, 1, s, 2*s, texture, 10, 20, 1);
+
+    glPopMatrix();
+}
+
+void Garages(double x, double y, double z, double s, unsigned int texture)
+{
+    double wall_width = 0.05 * s;
+    double offset =  s + 2*wall_width;
+
+    glPushMatrix();
+    glTranslated(x, y, z);
+    for(int i= -9;i <=10;i++)
+        Garage(0,0,i*offset, s, texture);
+    glPopMatrix();
+
+}

@@ -10,10 +10,16 @@ void cube(double ,double ,double ,
 
 void LightPoles(double , double , double , unsigned int, unsigned int);
 
-void GridPosMarkers(double , double , unsigned int);
+void GridPosMarkers(double, double, double, double , double , unsigned int);
 
-void GrandStand(double , double , double, unsigned int, unsigned int, unsigned int);
+void GrandStand(double , double , double, unsigned int, unsigned int, unsigned int, double);
 
 void StartLights(double , double , unsigned int, unsigned int );
+
+void Arc(double , double , double , double , double , double , double , unsigned int);
+
+// void Garage(double , double , double , double , unsigned int);
+
+void Garages(double , double , double , double , unsigned int);
 
 #endif
