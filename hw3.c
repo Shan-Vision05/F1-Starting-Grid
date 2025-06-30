@@ -80,7 +80,7 @@ float light_z = 3.5;
 float light_x = 1.3;
 
 int move = 1;
-unsigned int texture[13]; // Texture names
+unsigned int texture[17]; // Texture names
 
 
 
@@ -154,7 +154,87 @@ static void ball(double x,double y,double z,double r)
    //  Undo transofrmations
    glPopMatrix();
 }
+void PitLane(double length, double width, double side_walk_w, double road_width)
+{
+    
+    double pitLane_ir = road_width - side_walk_w;
 
+    Plane(GL_POLYGON, road_width - side_walk_w ,0,0, 0, 0,0, 1, 1, 1, length*2, road_width/4, texture[0], 10, 20, 1); //Pit Lane
+    Plane(GL_POLYGON, road_width - side_walk_w ,0,0, 0, 0,0, 1, 1, 1, length*2, road_width/4, texture[0], 10, 20, 1); //Pit Lane Border
+    
+    
+    Arc(5*(pitLane_ir) + road_width/8, 0, -length*2/2, 4*pitLane_ir, 4*pitLane_ir + road_width/4, 180, 240, texture[0]);
+
+
+    Arc(7*(pitLane_ir) + road_width/8, 0, length*2/2, 6*pitLane_ir, 6*pitLane_ir + road_width/4, 180, 150, texture[0]);
+
+    Garages(road_width+40,0,0, 20, texture[5], texture[16]);
+
+    
+    // renderRailings(road_width+40,20,0,texture[2]);
+    Plane(GL_POLYGON, road_width + road_width/4-2.7,0,0, 0, 0,0, 1, 1, 1, length*2, road_width/2, texture[0], 10, 20, 1);
+}
+
+void PitStopMarker(double road_width, double offset)
+{
+    glPushMatrix();
+    glTranslated(0,0, -15 + offset);
+    Plane(GL_POLYGON, road_width+25, 0,0, 0, 0,0, 1, 1, 1, 25, 1, texture[2], 1, 1, 1);
+    Plane(GL_POLYGON, road_width+32, 0,0, 0, 0,0, 1, 1, 1, 25, 1, texture[2], 1, 1, 1);
+    Plane(GL_POLYGON, road_width+18, 0,0, 0, 0,0, 1, 1, 1, 25, 1, texture[2], 1, 1, 1);
+
+    Plane(GL_POLYGON, road_width+33.5, 0,-7, 0, 0,0, 1, 1, 1, 1, 4, texture[2], 1, 1, 1);
+    Plane(GL_POLYGON, road_width+33.5, 0, 12.5, 0, 0,0, 1, 1, 1, 1, 4, texture[2], 1, 1, 1);
+
+    Plane(GL_POLYGON, road_width+16.5, 0,-7, 0, 0,0, 1, 1, 1, 1, 4, texture[2], 1, 1, 1);  
+    Plane(GL_POLYGON, road_width+16.5, 0,12.5, 0, 0,0, 1, 1, 1, 1, 4, texture[2], 1, 1, 1);
+
+    Plane(GL_POLYGON, road_width+32+2.5*Sin(30), 0,25-(12.5-2.5*Cos(30)), 30, 0,0, 1, 1, 1, 5, 1, texture[2], 1, 1, 1);
+    Plane(GL_POLYGON, road_width+18+2.5*Sin(-30), 0,25-(12.5-2.5*Cos(-30)), -30, 0,0, 1, 1, 1, 5, 1, texture[2], 1, 1, 1);
+    glPopMatrix();
+}
+
+void PitStopMarkers(double road_width)
+{
+    for(int i = - 4; i<=5;i++)
+    {
+        PitStopMarker(road_width, i * 44);
+    }
+    
+    // PitStopMarker(road_width, -44);
+}
+
+void PitLaneMarkers(double length, double width, double side_walk_w, double road_width, double pitLane_ir)
+{
+    double pit_lane_out_radius = 4*pitLane_ir + road_width/4;
+    double pit_lane_in_radius = 6*pitLane_ir + road_width/4;
+
+    double pit_lane_width = road_width/4;
+
+     // Pit Lane Entry and Exit markers
+     glColor3f(1,1,1);
+     Arc(5*(pitLane_ir) + road_width/8, 0, -length*2/2, pit_lane_out_radius, pit_lane_out_radius+2, 180, 233, texture[2]);
+     Arc(2*width+road_width/2, 0, -length*2.3/2, 2*width+road_width/4+5, 2*width+road_width/4+5+2, 257.5, 270, texture[2]);
+ 
+     Arc(7*(pitLane_ir) + road_width/8, 0, length*2/2, pit_lane_in_radius, pit_lane_in_radius+2, 180, 150.9, texture[2]);
+     Arc(2*width+road_width/2, 0, length*2.3/2, 2*width+road_width/4+5, 2*width+road_width/4+5+2, 121.5, 90, texture[2]);
+
+
+    //Turn Markers
+    Arc(2*width+road_width/2, 0, -length*2.3/2, 2*width + road_width, 2*width + road_width+5, 190, 233,  texture[13]);
+    Arc(2*width+road_width/2, 0, -length*2.3/2, 2*width + road_width, 2*width + road_width+5, 320, 360,  texture[13]);
+    Arc(2*width+road_width/2, 0, -length*2.3/2, 2*width-5, 2*width , 280, 340,  texture[13]);
+
+    Arc(2*width+road_width/2, 0, length*2.3/2, 2*width + road_width, 2*width + road_width+5, 170, 127,  texture[13]);
+    Arc(2*width+road_width/2, 0, length*2.3/2, 2*width + road_width, 2*width + road_width+5, 40, 0,  texture[13]);
+    Arc(2*width+road_width/2, 0, length*2.3/2, 2*width-5, 2*width , 80, 20,  texture[13]);
+
+    // Other pit lane Markers
+    Plane(GL_POLYGON, road_width - side_walk_w - pit_lane_width/2 -1,0,0, 0, 0,0, 1, 1, 1, length*2, 2, texture[2], 10, 20, 1);
+    Plane(GL_POLYGON, road_width - side_walk_w + pit_lane_width/2 +3,0,0, 0, 0,0, 1, 1, 1, length*2, 6, texture[14], 1, 15, 1);
+
+    PitStopMarkers(road_width);
+}
 
 void DrawScene()
 {
@@ -165,16 +245,18 @@ void DrawScene()
     double side_walk_w = 10.0;
 
     double road_width = 6*width/7;
-
+    double pitLane_ir = road_width - side_walk_w;
     
-    glScaled(0.1, 0.1, 0.1);
+    glScaled(0.2, 0.2, 0.2);
     glTranslated(-2*width-width/2, 0, 0);
 
     GridPosMarkers(0,0,0, length, width, texture[2]);
     GridPosMarkers(0,0,0, length, width, texture[2]);
 
+
     double wall_width = width/16;
 
+    PitLaneMarkers(length, width, side_walk_w, road_width, pitLane_ir);
 
     glEnable(GL_POLYGON_OFFSET_FILL);
     
@@ -184,17 +266,13 @@ void DrawScene()
     Arc(2*width+road_width/2, 0, -length*2.3/2, 2*width, 2*width + road_width, 180, 360, texture[0]);
     Arc(2*width+road_width/2, 0, length*2.3/2, 2*width, 2*width + road_width, 180, 0, texture[0]);
 
-    double pitLane_ir = road_width - side_walk_w;
-
-    Plane(GL_POLYGON, road_width - side_walk_w ,0,0, 0, 0,0, 1, 1, 1, length*2, road_width/4, texture[0], 10, 20, 1); //Pit Lane
-    Arc(5*(pitLane_ir) + road_width/8, 0, -length*2/2, 4*pitLane_ir, 4*pitLane_ir + 20, 180, 240, texture[0]);
-    Arc(7*(pitLane_ir) + road_width/8, 0, length*2/2, 6*pitLane_ir, 6*pitLane_ir + 20, 180, 150, texture[0]);
-
     
+    
+    PitLane(length, width, side_walk_w, road_width);
     
     glPolygonOffset(2,2);
-    Plane(GL_POLYGON, 0,0,0, 0, 0,0, 0.1, 0.5, 0.12, length*5, width, texture[1], 12, 20, 1); // Grass
-    Plane(GL_POLYGON, 4*width+width,0,0, 0, 0,0, 0.1, 0.5, 0.12, length*5, width, texture[1], 12, 20, 1); // Grass
+    Plane(GL_POLYGON, 0,0,0, 0, 0,0, 0.1, 0.5, 0.12, length*5, width+100, texture[1], 12, 20, 1); // Grass
+    Plane(GL_POLYGON, 4*width+width,0,0, 0, 0,0, 0.1, 0.5, 0.12, length*5, width+100, texture[1], 12, 20, 1); // Grass
     Plane(GL_POLYGON, 2*width+width/2,0,0, 0, 0,0, 0.1, 0.5, 0.12, length*5, 4*width, texture[1], 12, 20, 1);
 
     glDisable(GL_POLYGON_OFFSET_FILL);
@@ -210,9 +288,23 @@ void DrawScene()
 
     GrandStand(length, width, side_walk_w, texture[4], texture[2], texture[5], 4*width + road_width);
 
+    glPushMatrix();
+    glTranslated(100, 0, -100);
+    glRotated(45, 0, 1, 0);
+    GrandStandNoRoof(length, width, side_walk_w, texture[4], texture[2], texture[5], 4*width + road_width);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslated(100, 0, 100);
+    glRotated(-45, 0, 1, 0);
+    GrandStandNoRoof(length, width, side_walk_w, texture[4], texture[2], texture[5], 4*width + road_width);
+    glPopMatrix();
+
     StartLights(length, width, texture[5], texture[6]);
 
-    Garages(road_width,0,0, 20, texture[4]);
+    Plane(GL_POLYGON, 0,0,-150, 0, 0,0, 1, 1, 1, 5, road_width, texture[15], 2, 1, 1); // Finish Line
+
+    
 
     car(texture[7], texture[8], texture[9], texture[10], texture[11], texture[12]); 
 
@@ -220,8 +312,10 @@ void DrawScene()
 
 }
 
+
 void display()
 {
+    // glClearColor(0.529, 0.808f, 0.922, 1.0);
     //  Erase the window and the depth buffer
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
     //  Enable Z-buffering in OpenGL
@@ -290,8 +384,14 @@ void display()
 
     if(showCarOnly != 0)
         DrawScene(); // Renders the Scene
+    else
+        car(texture[7], texture[8], texture[9], texture[10], texture[11], texture[12]);
     // Garages(0,0,0, 20, texture[5]);
-    
+
+    // drawTree(0, 0, 0,
+    //     20, 10,
+    //     texture[4], texture[6]);
+ 
 
     // glPushMatrix();
     // glScaled(0.1, 0.1, 0.1);
@@ -541,6 +641,10 @@ int main(int argc, char* argv[])
     texture[10] = LoadTexBMP("textures/ferrari_nose_texture.bmp");
     texture[11] = LoadTexBMP("textures/glossy_ferrari_red_512x512.bmp");
     texture[12] = LoadTexBMP("textures/sponsor_stripe_512x256.bmp");
+    texture[13] = LoadTexBMP("textures/Turn_sides.bmp");
+    texture[14] = LoadTexBMP("textures/aramco_strip_24bpp.bmp");
+    texture[15] = LoadTexBMP("textures/Finish_Line.bmp");
+    texture[16] = LoadTexBMP("textures/floor.bmp");
 
 
     glutMainLoop();

@@ -66,7 +66,7 @@ void Arc(double x, double y, double z, double innerR, double outerR, double star
 
     glPushMatrix();
     glTranslated(x, y, z);
-    glColor3f(0.5, 0.5, 0.5);
+    
 
     glEnable(GL_TEXTURE_2D);
     glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE, GL_MODULATE);
@@ -88,9 +88,9 @@ void Arc(double x, double y, double z, double innerR, double outerR, double star
         float yInner = Sin(angle)*innerR;
         // order matters: inner, then outer (or vice versa) for a strip
         glNormal3f(0.0, 1.0, 0.0);
-        glTexCoord2f(t, 0.0);
+        glTexCoord2f(3*t, 0.0);
         glVertex3f(xInner,0, yInner);
-        glTexCoord2f(t, 1.0);
+        glTexCoord2f(3*t, 1.0);
         glVertex3f(xOuter,0, yOuter);
     }
     glEnd();
@@ -499,6 +499,21 @@ void GrandStand(double h, double w, double side_walk_w, unsigned int tex_pole, u
 
 }
 
+void GrandStandNoRoof(double h, double w, double side_walk_w, unsigned int tex_pole, unsigned int tex_seating, unsigned int text_roof, double offset)
+{   int width = 2;
+    int height = 1;
+    int length = h;
+    int i =0;
+
+    glColor3f(0.2,0.2,0.2);
+    //Right Grand Stand
+    for(i = 1; i< 10;i++)
+    {        
+        cube(w/2+side_walk_w+ (2*(i-1)+1)*width + offset, i*height, 0, width, i*height, length/2,0 , tex_seating);
+    }
+
+}
+
 
 void circle(double x, double y, double z, double r, unsigned int texture)
 {
@@ -542,17 +557,17 @@ void circle(double x, double y, double z, double r, unsigned int texture)
 void StartLight(double w, double h, double x_offset, unsigned int texture, unsigned int tex_light)
 {
     glColor3f(0.1, 0.1, 0.1);
-    circle(x_offset,w/5-0,-h/4+0.5,0.75, tex_light);
-    circle(x_offset,w/5-2,-h/4+0.5,0.75, tex_light);
+    circle(x_offset,w/5-0,-h/4+0.5-h/4,0.75, tex_light);
+    circle(x_offset,w/5-2,-h/4+0.5-h/4,0.75, tex_light);
     glColor3f(0.9, 0.0, 0.0);
-    circle(x_offset,w/5-4,-h/4+0.5,0.75, tex_light);
-    circle(x_offset,w/5-6,-h/4+0.5,0.75, tex_light);
+    circle(x_offset,w/5-4,-h/4+0.5-h/4,0.75, tex_light);
+    circle(x_offset,w/5-6,-h/4+0.5-h/4,0.75, tex_light);
 
     glEnable(GL_POLYGON_OFFSET_FILL);
     
     glPolygonOffset(1,1);
     glColor3f(0.4, 0.4, 0.4);
-    cube(x_offset,w/5-3, -h/2+0.5, 1,4,0.5, 0, texture);
+    cube(x_offset,w/5-3, -h+0.5, 1,4,0.5, 0, texture);
     glDisable(GL_POLYGON_OFFSET_FILL);
 }
 
@@ -560,12 +575,12 @@ void StartLight(double w, double h, double x_offset, unsigned int texture, unsig
 void StartLights(double h, double w, unsigned int texture, unsigned int tex_light)                                                         
 {   
     glColor3f(0.4, 0.4, 0.4);
-    cylinder(-w/2,0, -h/2, w/5, 0, texture);  
-    cylinder(w/2,0, -h/2, w/5, 0, texture);
+    cylinder(-w/2,0, -h, w/5, 0, texture);  
+    cylinder(w/2,0, -h, w/5, 0, texture);
 
 
-    cylinder(w/2,w/5, -h/2, w, 90, texture);
-    cylinder(w/2,w/6, -h/2, w, 90, texture);
+    cylinder(w/2,w/5, -h, w, 90, texture);
+    cylinder(w/2,w/6, -h, w, 90, texture);
 
 
     //Ligths
@@ -576,26 +591,70 @@ void StartLights(double h, double w, unsigned int texture, unsigned int tex_ligh
     StartLight(w,h,-6, texture, tex_light);
 }
 
+// void renderRailings(double x, double y,unsigned int tex) {
+//     const int   POSTS        = 8;          // number of vertical posts
+//     const double SPACING      = 5;        // distance between posts
+//     const double POST_HEIGHT  = 1.2;        // height of each post
+//     const double BOTTOM_RAILY = 0.3;        // height of bottom rail
+//     const double TOP_RAILY    = 1.0;        // height of top rail
+//     const double STARTX       = 0.0;        // x‐coordinate of first post
+//     const double Y            = 0.0;        // ground level (y)
+//     const double Z            = 0.0;        // z‐offset of railing
+//     glPushMatrix();
+//     glScaled(0.1, 1, 0.1);
+//     // 1) Vertical posts
+//     for(int i = -4; i < 4; i++) {
+//         cylinder(STARTX , Y, Z + i * SPACING,
+//                  2,     // height
+//                  0.0,             // no rotation
+//                  tex);
+//     }
 
-void Garage(double x, double y, double z, double s, unsigned int texture)
+//     glPopMatrix();
+
+//     // 2) Horizontal rails (rotate cyl to lie along X)
+//     //    Bottom rail
+//     // glPushMatrix();
+//     //   glTranslated(STARTX, BOTTOM_RAILY, Z);
+//     //   glRotated(90.0, 0, 0, 1);  // spin Y–>X
+//     //   cylinder(0.0, 0.0, 0.0,
+//     //            20,  // length of rail
+//     //            0.0,
+//     //            tex);
+//     // glPopMatrix();
+
+//     // //    Top rail
+//     // glPushMatrix();
+//     //   glTranslated(STARTX, TOP_RAILY, Z);
+//     //   glRotated(90.0, 0, 0, 1);
+//     //   cylinder(0.0, 0.0, 0.0,
+//     //            20,
+//     //            0.0,
+//     //            tex);
+//     // glPopMatrix();
+
+// }
+
+
+void Garage(double x, double y, double z, double s, unsigned int texture1, unsigned int texture2)
 {
     double wall_width = 0.05 * s;
     glPushMatrix();
     glTranslated(x,y,z);
 
-    cube(s,s/2, -s/2 -wall_width/2, s, s/2, wall_width, 0, texture);
-    cube(s,s/2, +s/2 +wall_width/2, s, s/2, wall_width, 0, texture);
+    cube(s,s/2, -s/2 -wall_width/2, s, s/2, wall_width, 0, texture1);
+    cube(s,s/2, +s/2 +wall_width/2, s, s/2, wall_width, 0, texture1);
 
-    cube(s, s-wall_width, 0, s, wall_width, s/2, 0, texture);
+    cube(s, s-wall_width, 0, s, wall_width, s/2, 0, texture1);
 
-    cube(2*s - wall_width,s/2,0, wall_width, s/2, s/2, 0, texture);
+    cube(2*s - wall_width,s/2,0, wall_width, s/2, s/2, 0, texture1);
     // Plane(GL_POLYGON, s, 0,s/2, 0, 0, 0,  )
-    Plane(GL_POLYGON, s, 0,0, 0, 0,0, 1, 1, 1, s, 2*s, texture, 10, 20, 1);
+    Plane(GL_POLYGON, s, 0,0, 0, 0,0, 1, 1, 1, s, 2*s, texture2, 1, 1, 1);
 
     glPopMatrix();
 }
 
-void Garages(double x, double y, double z, double s, unsigned int texture)
+void Garages(double x, double y, double z, double s, unsigned int texture1, unsigned int texture2)
 {
     double wall_width = 0.05 * s;
     double offset =  s + 2*wall_width;
@@ -603,7 +662,7 @@ void Garages(double x, double y, double z, double s, unsigned int texture)
     glPushMatrix();
     glTranslated(x, y, z);
     for(int i= -9;i <=10;i++)
-        Garage(0,0,i*offset, s, texture);
+        Garage(0,0,i*offset, s, texture1, texture2);
     glPopMatrix();
 
 }
