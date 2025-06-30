@@ -42,6 +42,7 @@
 #include "CSCI5229.h"
 #include "objects.h"
 #include "car.h"
+#include "car/CarParts.h"
 
 int theta = 20;
 int phi = 35;
@@ -306,7 +307,7 @@ void DrawScene()
 
     
 
-    car(texture[7], texture[8], texture[9], texture[10], texture[11], texture[12]); 
+    NewCar(texture[7], texture[8], texture[9], texture[10], texture[11], texture[12]); 
 
     glPopMatrix();
 
@@ -385,7 +386,10 @@ void display()
     if(showCarOnly != 0)
         DrawScene(); // Renders the Scene
     else
-        car(texture[7], texture[8], texture[9], texture[10], texture[11], texture[12]);
+        // car(texture[7], texture[8], texture[9], texture[10], texture[11], texture[12]);
+        {
+            NewCar(texture[7], texture[8], texture[9], texture[10], texture[11], texture[12]);
+        }
     // Garages(0,0,0, 20, texture[5]);
 
     // drawTree(0, 0, 0,

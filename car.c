@@ -2,6 +2,8 @@
 #include "car.h"
 #include "objects.h"
 
+#include "car/CarParts.h"
+
 typedef struct { float z, y; } Vec2;
 typedef struct { float x, y, z; } Vec3;
 
@@ -41,7 +43,7 @@ Vec2 Monocoque_CP_Down[5] ={
     {-34,0.5}
 };
 
-Vec3 cross(const Vec3 a, const Vec3 b) {
+Vec3 cross_old(const Vec3 a, const Vec3 b) {
     Vec3 c;
     c.x = a.y*b.z - a.z*b.y;
     c.y = a.z*b.x - a.x*b.z;
@@ -50,7 +52,7 @@ Vec3 cross(const Vec3 a, const Vec3 b) {
 }
 
 
-Vec2 GetPoint_Bezier(const Vec2 *CP, int n, float t)
+Vec2 GetPoint_Bezier_old(const Vec2 *CP, int n, float t)
 {
     // Gives us the point on the Bezier curve at time step t
     Vec2 tmp[n];
@@ -67,7 +69,7 @@ Vec2 GetPoint_Bezier(const Vec2 *CP, int n, float t)
     return tmp[0]; 
 }
 
-Vec2 GetTangent_Bezier(const Vec2 *CP, int n, float t)
+Vec2 GetTangent_Bezier_old(const Vec2 *CP, int n, float t)
 {
     if (n < 2) return (Vec2){0,0};
     int d = n - 1;
@@ -76,7 +78,7 @@ Vec2 GetTangent_Bezier(const Vec2 *CP, int n, float t)
         tmp[i].y = (CP[i+1].y - CP[i].y) * (float)d;
         tmp[i].z = (CP[i+1].z - CP[i].z) * (float)d;
     }
-    return GetPoint_Bezier(tmp, d, t);
+    return GetPoint_Bezier_old(tmp, d, t);
 }
 
 void CarNose(double r, double g, double b, unsigned int tex_nose, unsigned int tex_side)
@@ -101,11 +103,11 @@ void CarNose(double r, double g, double b, unsigned int tex_nose, unsigned int t
     for(int i=0;i<=samples;i++)
     {
         float t = (float)i / (float)samples;
-        Vec2 point = GetPoint_Bezier(Nose_CP_Top, 7, t);
-        Vec2 d = GetTangent_Bezier(Nose_CP_Top, 7, t);
+        Vec2 point = GetPoint_Bezier_old(Nose_CP_Top, 7, t);
+        Vec2 d = GetTangent_Bezier_old(Nose_CP_Top, 7, t);
         Vec3 T = {0.0, d.y, d.z};
         Vec3 W = {-1.0, 0.0, 0.0};
-        Vec3 N = cross(W,T);
+        Vec3 N = cross_old(W,T);
 
         float nose_w = 4 - 3 * t; // tapering as it reaches the tip
         glNormal3f(N.x, N.y, N.z);
@@ -124,11 +126,11 @@ void CarNose(double r, double g, double b, unsigned int tex_nose, unsigned int t
     for(int i=0;i<=samples;i++)
     {
         float t = (float)i / (float)samples;
-        Vec2 point = GetPoint_Bezier(Nose_CP_Down, 4, t);
-        Vec2 d = GetTangent_Bezier(Nose_CP_Down, 4, t);
+        Vec2 point = GetPoint_Bezier_old(Nose_CP_Down, 4, t);
+        Vec2 d = GetTangent_Bezier_old(Nose_CP_Down, 4, t);
         Vec3 T = {0.0, d.y, d.z};
         Vec3 W = {1.0, 0.0, 0.0};
-        Vec3 N = cross(W,T);
+        Vec3 N = cross_old(W,T);
         float nose_w = 4 - 3 * t; // tapering as it reaches the tip
         glNormal3f(N.x, N.y, N.z);
         glTexCoord2f(1, (1-t));
@@ -147,14 +149,14 @@ void CarNose(double r, double g, double b, unsigned int tex_nose, unsigned int t
      for(int i=0;i<=samples;i++)
      {
          float t = (float)i / (float)samples;
-         Vec2 point1 = GetPoint_Bezier(Nose_CP_Down, 4, t);
-         Vec2 point2 = GetPoint_Bezier(Nose_CP_Top, 7, t);
-         Vec2 d = GetTangent_Bezier(Nose_CP_Top, 7, t);
+         Vec2 point1 = GetPoint_Bezier_old(Nose_CP_Down, 4, t);
+         Vec2 point2 = GetPoint_Bezier_old(Nose_CP_Top, 7, t);
+         Vec2 d = GetTangent_Bezier_old(Nose_CP_Top, 7, t);
          float nose_w = 4 - 3 * t; // tapering as it reaches the tip
  
          Vec3 T = {-3, d.y, d.z};
          Vec3 W = {0.0, point2.y-point1.y, point2.z - point1.z};
-         Vec3 N = cross(W,T);
+         Vec3 N = cross_old(W,T);
  
          
          glNormal3f(N.x, N.y, N.z);
@@ -176,13 +178,13 @@ void CarNose(double r, double g, double b, unsigned int tex_nose, unsigned int t
     for(int i=0;i<=samples;i++)
     {
         float t = (float)i / (float)samples;
-        Vec2 point1 = GetPoint_Bezier(Nose_CP_Down, 4, t);
-        Vec2 point2 = GetPoint_Bezier(Nose_CP_Top, 7, t);
-        Vec2 d = GetTangent_Bezier(Nose_CP_Top, 7, t);
+        Vec2 point1 = GetPoint_Bezier_old(Nose_CP_Down, 4, t);
+        Vec2 point2 = GetPoint_Bezier_old(Nose_CP_Top, 7, t);
+        Vec2 d = GetTangent_Bezier_old(Nose_CP_Top, 7, t);
         float nose_w = 4 - 3 * t; // tapering as it reaches the tip
         Vec3 T = {3, d.y, d.z};
         Vec3 W = {0.0, point1.y-point2.y, point1.z - point2.z};
-        Vec3 N = cross(W,T);
+        Vec3 N = cross_old(W,T);
 
         
         glNormal3f(N.x, N.y, N.z);
@@ -226,11 +228,11 @@ void CarMonocoque(double r, double g, double b, unsigned int tex_end, unsigned i
     for(int i=0;i<=samples;i++)
     {
         float t = (float)i / (float)samples;
-        Vec2 point = GetPoint_Bezier(Monocoque_CP_Top, 6, t);
-        Vec2 d = GetTangent_Bezier(Monocoque_CP_Top, 6, t);
+        Vec2 point = GetPoint_Bezier_old(Monocoque_CP_Top, 6, t);
+        Vec2 d = GetTangent_Bezier_old(Monocoque_CP_Top, 6, t);
         Vec3 T = {0.0, d.y, d.z};
         Vec3 W = {1.0, 0.0, 0.0};
-        Vec3 N = cross(W,T);
+        Vec3 N = cross_old(W,T);
 
         
         float nose_w = 4 + amp * Sin(angle*t); // tapering as it reaches the end
@@ -250,11 +252,11 @@ void CarMonocoque(double r, double g, double b, unsigned int tex_end, unsigned i
     for(int i=0;i<=samples;i++)
     {
         float t = (float)i / (float)samples;
-        Vec2 point = GetPoint_Bezier(Monocoque_CP_Down, 5, t);
-        Vec2 d = GetTangent_Bezier(Monocoque_CP_Down, 5, t);
+        Vec2 point = GetPoint_Bezier_old(Monocoque_CP_Down, 5, t);
+        Vec2 d = GetTangent_Bezier_old(Monocoque_CP_Down, 5, t);
         Vec3 T = {0.0, d.y, d.z};
         Vec3 W = {-1.0, 0.0, 0.0};
-        Vec3 N = cross(W,T);
+        Vec3 N = cross_old(W,T);
 
         float nose_w = 4 + amp * Sin(angle*t); // tapering as it reaches the end
         glNormal3f(N.x, N.y, N.z);
@@ -275,16 +277,16 @@ void CarMonocoque(double r, double g, double b, unsigned int tex_end, unsigned i
     for(int i=0;i<=samples;i++)
     {
         float t = (float)i / (float)samples;
-        Vec2 point1 = GetPoint_Bezier(Monocoque_CP_Down, 5, t);
-        Vec2 point2 = GetPoint_Bezier(Monocoque_CP_Top, 6, t);
-        Vec2 d = GetTangent_Bezier(Monocoque_CP_Top, 6, t);
+        Vec2 point1 = GetPoint_Bezier_old(Monocoque_CP_Down, 5, t);
+        Vec2 point2 = GetPoint_Bezier_old(Monocoque_CP_Top, 6, t);
+        Vec2 d = GetTangent_Bezier_old(Monocoque_CP_Top, 6, t);
 
         float nose_w = 4 + amp * Sin(angle*t); // tapering as it reaches the end
         float dx = amp * angle * (3.14159/180) * Cos(angle*t);
 
         Vec3 T = {dx, d.y, d.z};
         Vec3 W = {0.0, point1.y - point2.y, point1.z - point2.z};
-        Vec3 N = cross(W,T);
+        Vec3 N = cross_old(W,T);
 
         
 
@@ -303,15 +305,15 @@ void CarMonocoque(double r, double g, double b, unsigned int tex_end, unsigned i
     for(int i=0;i<=samples;i++)
     {
         float t = (float)i / (float)samples;
-        Vec2 point1 = GetPoint_Bezier(Monocoque_CP_Down, 5, t);
-        Vec2 point2 = GetPoint_Bezier(Monocoque_CP_Top, 6, t);
-        Vec2 d = GetTangent_Bezier(Monocoque_CP_Top, 6, t);
+        Vec2 point1 = GetPoint_Bezier_old(Monocoque_CP_Down, 5, t);
+        Vec2 point2 = GetPoint_Bezier_old(Monocoque_CP_Top, 6, t);
+        Vec2 d = GetTangent_Bezier_old(Monocoque_CP_Top, 6, t);
         float nose_w = 4 + amp * Sin(angle*t); // tapering as it reaches the end
         float dx = amp * angle * (3.14159/180) * Cos(angle*t);
 
         Vec3 T = {-dx, d.y, d.z};
         Vec3 W = {0.0, point2.y - point1.y, point2.z - point1.z};
-        Vec3 N = cross(W,T);
+        Vec3 N = cross_old(W,T);
 
         glNormal3f(N.x, N.y, N.z);
         glTexCoord2f( (1-t), 0.0);
@@ -474,3 +476,25 @@ void car(unsigned int tex_end, unsigned int tex_wheel, unsigned int tex_rim, uns
     glPopMatrix();
 
 }
+
+
+void NewCar(unsigned int tex_end, unsigned int tex_wheel, unsigned int tex_rim, unsigned int tex_nose,
+    unsigned int tex_nose_side, unsigned int text_side_strip)
+    {
+        glPushMatrix();
+
+        glScaled(0.5, 0.5, 0.5);
+        glPushMatrix();
+
+        // glTranslated(-20,1,15);
+        glTranslated(0,-5,-58);
+        // glRotated(-180, 0,1,0);
+        glScaled(0.7,0.7,0.7);
+        
+        Wing();
+        Monocoque_Front();
+        
+        glPopMatrix();
+        wheels(tex_wheel, tex_rim, tex_end);
+        glPopMatrix();
+    }
