@@ -1,4 +1,5 @@
 #include "Utils.h"
+#include<math.h>
 
 Vec2 GetPoint_Bezier(const Vec2 *CP, int n, float t)
 {
@@ -35,4 +36,17 @@ Vec3 cross(const Vec3 a, const Vec3 b) {
     c.ax2 = a.ax3*b.ax1 - a.ax1*b.ax3;
     c.ax3 = a.ax1*b.ax2 - a.ax2*b.ax1;
     return c;
+}
+
+Vec3 Normalize(Vec3 v)
+{
+    float sum_sq = sqrt(v.ax1*v.ax1 + v.ax2*v.ax2 + v.ax3*v.ax3);
+
+    if(sum_sq != 0)
+    {
+        v.ax1/= sum_sq;
+        v.ax2/= sum_sq;
+        v.ax3/= sum_sq;
+    }
+    return v;
 }

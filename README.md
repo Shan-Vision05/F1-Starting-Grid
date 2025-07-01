@@ -52,9 +52,9 @@ Instructions to Run:
 
     1. make
 
-    2. ./hw3
+    2. ./pr
 
-Note: I've observed best change to the shine of objects when shine is set to 8 or 16.
+Note: I've Added a Front Wing to the car, you can view only the car with a 'c/C' Key press.
 
 Aknowlegments:
 
@@ -90,4 +90,15 @@ Code Structure:
 
     6. loadtexbmp.c has a function to load .bmp files as a texture
 
-Time Taken for this assigment: ~ 15+ Hours (including all kinds of formatting, Trial & Error)
+
+What's Left to do:
+
+    1. Rear wing, halo for the car is pending. Adding new texture to car body..
+
+    2. Adding Trees ( I've already looked into it), people, gravel texture and people (pit crew)
+
+    3. Increase more detail to the scene.
+
+    4. Add functionality for the start lights to go out.
+
+Time Taken for this assigment: ~ 25+ Hours (including all kinds of formatting, Trial & Error)

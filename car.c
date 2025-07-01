@@ -493,8 +493,10 @@ void NewCar(unsigned int tex_end, unsigned int tex_wheel, unsigned int tex_rim, 
         
         Wing();
         Monocoque_Front();
+        Halo();
         
         glPopMatrix();
+        glTranslated(0,0,2);
         wheels(tex_wheel, tex_rim, tex_end);
         glPopMatrix();
     }

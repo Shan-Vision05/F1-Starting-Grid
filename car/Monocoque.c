@@ -18,6 +18,80 @@ Vec2 Mono_Front_B[5] ={
 
 };
 
+void cube_mono(double x,double y,double z,
+    double dx,double dy,double dz,
+    double th)
+{
+
+    float white[] = {1,1,1,1};
+    float black[] = {0,0,0,1};
+    glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE, white);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,black);
+
+    //  Save transformation
+    glPushMatrix();
+    //  Offset
+    glTranslated(x,y,z);
+    glRotated(th,0,0,1);
+    glScaled(dx,dy,dz);
+
+
+
+    glEnable(GL_TEXTURE_2D);
+    glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
+    // glColor3f(1,1,1);
+    glBindTexture(GL_TEXTURE_2D,(unsigned int) 0);
+
+
+    //  Cube
+    glBegin(GL_QUADS);
+    //  Front
+    // glColor3f(1,0,0);
+    glNormal3f(0,0,1);
+    glTexCoord2f(0,0); glVertex3f(-1,-1, 1);
+    glTexCoord2f(1,0); glVertex3f(+1,-1, 1);
+    glTexCoord2f(1,1); glVertex3f(+1,+1, 1);
+    glTexCoord2f(0,1); glVertex3f(-1,+1, 1);
+    //  Back
+    glNormal3f(0,0,-1);
+    glTexCoord2f(0,0); glVertex3f(+1,-1,-1);
+    glTexCoord2f(1,0); glVertex3f(-1,-1,-1);
+    glTexCoord2f(1,1); glVertex3f(-1,+1,-1);
+    glTexCoord2f(0,1); glVertex3f(+1,+1,-1);
+    //  Right
+    glNormal3f(1,0,0);
+    glTexCoord2f(0,0); glVertex3f(+1,-1,+1);
+    glTexCoord2f(1,0); glVertex3f(+1,-1,-1);
+    glTexCoord2f(1,1); glVertex3f(+1,+1,-1);
+    glTexCoord2f(0,1); glVertex3f(+1,+1,+1);
+    //  Left
+    glNormal3f(-1,0,0);
+    glTexCoord2f(0,0); glVertex3f(-1,-1,-1);
+    glTexCoord2f(1,0); glVertex3f(-1,-1,+1);
+    glTexCoord2f(1,1); glVertex3f(-1,+1,+1);
+    glTexCoord2f(0,1); glVertex3f(-1,+1,-1);
+    //  Topfrom image
+    glNormal3f(0,1,0);
+    glTexCoord2f(0,0); glVertex3f(-1,+1,+1);
+    glTexCoord2f(1,0); glVertex3f(+1,+1,+1);
+    glTexCoord2f(1,1); glVertex3f(+1,+1,-1);
+    glTexCoord2f(0,1); glVertex3f(-1,+1,-1);
+    //  Bottom
+    glNormal3f(0,-1,0);
+    glTexCoord2f(0,0); glVertex3f(-1,-1,-1);
+    glTexCoord2f(1,0); glVertex3f(+1,-1,-1);
+    glTexCoord2f(1,1); glVertex3f(+1,-1,+1);
+    glTexCoord2f(0,1); glVertex3f(-1,-1,+1);
+    //  End
+    glEnd();
+
+    glDisable(GL_TEXTURE_2D);
+    //  Undo transformations
+    glPopMatrix();
+}
+
 void Monocoque_Front()
 {
     float white[] = {1,1,1,1};
@@ -128,7 +202,10 @@ void Monocoque_Front()
 
     glEnd();
 
-    glColor3f(1, 1, 1);
+    // end setup
+    // y:13 z = 96
+    cube_mono(0, 13, 96, 2, 2, 10, 0);
+
 
     glPopMatrix();
 }

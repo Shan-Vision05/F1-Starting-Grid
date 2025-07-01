@@ -130,27 +130,28 @@ void Nose()
     glEnd();
 
 
-     // //Left Side of the nose
-     glBegin(GL_TRIANGLE_STRIP);
-     for(int i=0;i<=samples;i++)
-     {
-         float t = (float)i / (float)samples;
-         Vec2 point1 = GetPoint_Bezier(W_Nose_CP_Down, 4, t);
-         Vec2 point2 = GetPoint_Bezier(W_Nose_CP_Top, 6, t);
-         Vec2 d = GetTangent_Bezier(W_Nose_CP_Top, 6, t);
-         float nose_w = 1.2 + 1.6 * t; // tapering as it reaches the tip
- 
-         Vec3 T = {-1.6, d.ax2, d.ax1};
-         Vec3 W = {0.0, point2.ax2-point1.ax2, point2.ax1 - point1.ax1};
-         Vec3 N = cross(W,T);
- 
-         
-         glNormal3f(N.ax1, N.ax2, N.ax3);
-         glVertex3f(  nose_w, point1.ax2, point1.ax1);
-         glVertex3f(  nose_w, point2.ax2, point2.ax1);
-     }
-     glEnd();
+    // //Left Side of the nose
+    glBegin(GL_TRIANGLE_STRIP);
+    for(int i=0;i<=samples;i++)
+    {
+        float t = (float)i / (float)samples;
+        Vec2 point1 = GetPoint_Bezier(W_Nose_CP_Down, 4, t);
+        Vec2 point2 = GetPoint_Bezier(W_Nose_CP_Top, 6, t);
+        Vec2 d = GetTangent_Bezier(W_Nose_CP_Top, 6, t);
+        float nose_w = 1.2 + 1.6 * t; // tapering as it reaches the tip
 
+        Vec3 T = {-1.6, d.ax2, d.ax1};
+        Vec3 W = {0.0, point2.ax2-point1.ax2, point2.ax1 - point1.ax1};
+        Vec3 N = cross(W,T);
+
+        
+        glNormal3f(N.ax1, N.ax2, N.ax3);
+        glVertex3f(  nose_w, point1.ax2, point1.ax1);
+        glVertex3f(  nose_w, point2.ax2, point2.ax1);
+    }
+    glEnd();
+
+    // Right Side of the Nose
     glBegin(GL_TRIANGLE_STRIP);
     for(int i=0;i<=samples;i++)
     {
@@ -358,7 +359,6 @@ void WingBladeFirst(int tipF, float x, float y, float z, int isFirst)
         Vec2 point1 = GetPoint_Bezier(W_Tip_Blade_F, 3, t);
         Vec2 point2 = GetPoint_Bezier(W_Tip_Blade_B, 3, t);
 
-        float nose_w = 1; // tapering as it reaches the tip
         float dz = -tipF*180*Cos(180*t) * (3.14159/180);
 
         Vec2 d = GetTangent_Bezier(W_Tip_Blade_F, 3, t);
