@@ -32,10 +32,11 @@ Wing.o: car/Wing.c car/Utils.h CSCI5229.h car/CarParts.h
 Monocoque.o: car/Monocoque.c car/Utils.h CSCI5229.h car/CarParts.h
 Halo.o: car/Halo.c car/Utils.h CSCI5229.h car/CarParts.h
 RearWing.o: car/RearWing.c car/Utils.h CSCI5229.h car/CarParts.h
+Selection3D.o: Selection3D.c CSCI5229.h
 
-
-pr.o: pr.c CSCI5229.h objects.h car/CarParts.h 
+pr.o: pr.c CSCI5229.h objects.h car/CarParts.h Selection3D.h
 objects.o: objects.c CSCI5229.h objects.h
+
 
 print.o: print.c CSCI5229.h
 errcheck.o: errcheck.c CSCI5229.h
@@ -43,7 +44,7 @@ loadtexbmp.o: loadtexbmp.c CSCI5229.h
 fatal.o: fatal.c CSCI5229.h
 
 # Create archive
-CSCI5229.a:print.o loadtexbmp.o errcheck.o fatal.o Utils.o Wing.o Monocoque.o Halo.o RearWing.o
+CSCI5229.a:print.o loadtexbmp.o errcheck.o fatal.o Utils.o Wing.o Monocoque.o Halo.o RearWing.o Selection3D.o
 	ar -rcs $@ $^
 
 # Compile rules
@@ -53,7 +54,7 @@ CSCI5229.a:print.o loadtexbmp.o errcheck.o fatal.o Utils.o Wing.o Monocoque.o Ha
 	g++ -c $(CFLG)  $<
 
 #  Link
-pr:pr.o  objects.o car.o CSCI5229.a
+pr:pr.o  objects.o car.o CSCI5229.a  
 	gcc $(CFLG) -o $@ $^  $(LIBS)
 
 #  Clean

@@ -43,16 +43,24 @@
 #include "objects.h"
 #include "car.h"
 #include "car/CarParts.h"
+#include "Selection3D.h"
 
 int theta = 20;
 int phi = 35;
 int dim = 100;
 
+static float cx=0, cy=0, cz=0;
+static float sx=1, sy=1, sz=1;
+static float angleY = 0.0f;
+
+const float MOVE_D = 0.1f;
+const float SCALE_D = 0.1f;
+
 int mode=1;       //  Projection mode
 int fov=55;       //  Field of view (for perspective)
 double asp=1;     //  Aspect ratio
 
-int showCarOnly = 0;
+int showCarOnly = 1;
 
 // First Person perspective Camera states
 float  camY = 1;
@@ -85,6 +93,8 @@ unsigned int texture[17]; // Texture names
 
 int debugRay = 1;
 Vec3 debugRayO, debugRayD;
+
+
 
 
 
@@ -421,6 +431,14 @@ void display()
         glPopAttrib();
       }
 
+    glPushMatrix();
+    glTranslatef(cx, cy, cz);
+    glScalef(sx, sy, sz);
+    glRotatef(angleY, 0.0f, 1.0f, 0.0f);
+    glColor3f(0.2f,0.8f,0.2f);
+    glutWireCube(2.0f);
+    glPopMatrix();
+
 
     // Disabling lighting for axis
     glDisable(GL_LIGHTING);
@@ -451,7 +469,7 @@ void display()
 
     glWindowPos2i(5,25);
     Print("Ambient=%.2f  Diffuse=%.2f Specular=%.2f Emission=%.2f Shininess=%.2f",ambient,diffuse,specular,emission,shiny);
-
+    renderSelectionHighlight();
     ErrCheck("display");
     glFlush();
     glutSwapBuffers();
@@ -565,50 +583,50 @@ void key(unsigned char ch, int x, int y)
         mode = (mode+1)%3;
     }
 
-    else if(ch == 'c' || ch =='C')
-        showCarOnly = (showCarOnly+1)%2;
+    // else if(ch == 'c' || ch =='C')
+    //     showCarOnly = (showCarOnly+1)%2;
     
-    else if (ch == 'i' || ch == 'I')
-      light = 1-light;
+    // else if (ch == 'i' || ch == 'I')
+    //   light = 1-light;
 
-    //  Change field of view angle
+    // //  Change field of view angle
     
-    else if (ch=='a' && ambient>0)
-        ambient -= 5;
-    else if (ch=='A' && ambient<100)
-        ambient += 5;
-    //  Diffuse level
-    else if (ch=='d' && diffuse>0)
-        diffuse -= 5;
-    else if (ch=='D' && diffuse<100)
-        diffuse += 5;
-    //  Specular level
-    else if (ch=='s' && specular>0)
-        specular -= 5;
-    else if (ch=='S' && specular<100)
-        specular += 5;
-    //  Emission level
-    else if (ch=='e' && emission>0)
-        emission -= 5;
-    else if (ch=='E' && emission<100)
-        emission += 5;
-    //  Shininess level
-    else if (ch=='n' && shininess>-1)
-        shininess -= 1;
-    else if (ch=='N' && shininess<7)
-        shininess += 1;
-    else if (ch == 'W' && light_x <=4.0)
-        light_x += 0.1;
-    else if (ch == 'w' && light_x > 0.0)
-        light_x -= 0.1;
-    else if (ch == 'L' && light_z <=8.0)
-        light_z += 0.1;
-    else if (ch == 'l' && light_z > 0.0)
-        light_z -= 0.1;
-    else if (ch == 'Y' && ylight <=100)
-        ylight += 5;
-    else if (ch == 'y' && ylight > -100)
-        ylight -= 5;
+    // else if (ch=='a' && ambient>0)
+    //     ambient -= 5;
+    // else if (ch=='A' && ambient<100)
+    //     ambient += 5;
+    // //  Diffuse level
+    // else if (ch=='d' && diffuse>0)
+    //     diffuse -= 5;
+    // else if (ch=='D' && diffuse<100)
+    //     diffuse += 5;
+    // //  Specular level
+    // else if (ch=='s' && specular>0)
+    //     specular -= 5;
+    // else if (ch=='S' && specular<100)
+    //     specular += 5;
+    // //  Emission level
+    // else if (ch=='e' && emission>0)
+    //     emission -= 5;
+    // else if (ch=='E' && emission<100)
+    //     emission += 5;
+    // //  Shininess level
+    // else if (ch=='n' && shininess>-1)
+    //     shininess -= 1;
+    // else if (ch=='N' && shininess<7)
+    //     shininess += 1;
+    // else if (ch == 'W' && light_x <=4.0)
+    //     light_x += 0.1;
+    // else if (ch == 'w' && light_x > 0.0)
+    //     light_x -= 0.1;
+    // else if (ch == 'L' && light_z <=8.0)
+    //     light_z += 0.1;
+    // else if (ch == 'l' && light_z > 0.0)
+    //     light_z -= 0.1;
+    // else if (ch == 'Y' && ylight <=100)
+    //     ylight += 5;
+    // else if (ch == 'y' && ylight > -100)
+    //     ylight -= 5;
 
 
     else if (ch == ' ')
@@ -620,6 +638,42 @@ void key(unsigned char ch, int x, int y)
     
     shiny = shininess<0 ? 0 : pow(2.0,shininess);
 
+    switch(ch){
+        // Move X/Y/Z
+        case 'a': cx -= MOVE_D; break;
+        case 'd': cx += MOVE_D; break;
+        case 'w': cy += MOVE_D; break;
+        case 's': cy -= MOVE_D; break;
+        case 'r': cz += MOVE_D; break;  // rise
+        case 'f': cz -= MOVE_D; break;  // fall
+  
+        // Scale X axis
+        case 'x': sx = fmax(0.1f, sx - SCALE_D); break;
+        case 'X': sx += SCALE_D;              break;
+        // Scale Y axis
+        case 'y': sy = fmax(0.1f, sy - SCALE_D); break;
+        case 'Y': sy += SCALE_D;              break;
+        // Scale Z axis
+        case 'z': sz = fmax(0.1f, sz - SCALE_D); break;
+        case 'Z': sz += SCALE_D;              break;
+
+        case ',':  // rotate left
+            angleY -= 5.0f;
+            break;
+        case '.':  // rotate right
+            angleY += 5.0f;
+            break;
+  
+        // Print
+        case 'p':
+          printf("Center = (%.2f, %.2f, %.2f,)\n", cx, cy, cz);
+          printf("Dims   = (%.2f, %.2f, %.2f,)\n",
+                 sx*2, sy*2, sz*2);
+          break;
+  
+        case 27: exit(0); // ESC
+      }
+
     //  Reproject
     Project();
     glutIdleFunc(move?idle:NULL);
@@ -627,65 +681,18 @@ void key(unsigned char ch, int x, int y)
     glutPostRedisplay();
 }
 
-// // Returns distance t along ray, or -1 if no hit
-// float intersectSphere(const vec3 &rayO, const vec3 &rayD, 
-//     const vec3 &center, float radius)
-// {
-// vec3 L = center - rayO;
-// float tca = dot(L, rayD);
-// if (tca < 0) return -1;       // behind you
-// float d2 = dot(L, L) - tca*tca;
-// if (d2 > radius*radius) return -1;
-// float thc = sqrt(radius*radius - d2);
-// float t0 = tca - thc;
-// float t1 = tca + thc;
-// return (t0 < 0) ? t1 : t0;    // pick the nearest positive
-// }
 
-void getMouseRay(int mouseX, int mouseY, 
-    Vec3 *rayOrigin, Vec3 *rayDir)
-{
-GLint   viewport[4];
-glGetIntegerv(GL_VIEWPORT, viewport);
-
-GLdouble model[16], proj[16];
-GLdouble winX = (double)mouseX;
-GLdouble winY = (double)viewport[3] - (double)mouseY;  
-GLdouble nearPos[3], farPos[3];
-
-
-glGetDoublev(GL_MODELVIEW_MATRIX, model);
-glGetDoublev(GL_PROJECTION_MATRIX,  proj);
-
-// Unproject at near plane (z = 0)
-gluUnProject(winX, winY, 0.0, model, proj, viewport,
-    &nearPos[0], &nearPos[1], &nearPos[2]);
-
-// And at far plane (z = 1)
-gluUnProject(winX, winY, 1.0, model, proj, viewport,
-    &farPos[0], &farPos[1], &farPos[2]);
-
-// Ray origin is the camera (nearPos)
-*rayOrigin = (Vec3){nearPos[0], nearPos[1], nearPos[2]};
-// Direction is (farPos – nearPos), normalized
-*rayDir = (Vec3){
-farPos[0] - nearPos[0],
-farPos[1] - nearPos[1],
-farPos[2] - nearPos[2]};
-float len = sqrtf(rayDir->ax1* rayDir->ax1 + rayDir->ax2* rayDir->ax2 + rayDir->ax3* rayDir->ax3);
-*rayDir = (Vec3){ rayDir->ax1/len, rayDir->ax2/len, rayDir->ax3/len };
-
-}
-
-void mouse(int button,int state,int x,int y)
-{
-    if (button==GLUT_LEFT_BUTTON && state==GLUT_DOWN) {
-        // printf("%d %d \n", x, y);
-
-        getMouseRay(x, y, &debugRayO, &debugRayD);
+// Mouse callback functions
+void mouse(int button, int state, int x, int y) {
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+        int objectID = getObjectAtMouse(x, y);
+        selectObject(objectID);
         glutPostRedisplay();
     }
-}
+    
+    lastMouseX = x;
+    lastMouseY = y;
+  }
 
 int main(int argc, char* argv[])
 {
@@ -700,6 +707,8 @@ int main(int argc, char* argv[])
     #ifdef USEGLEW
     if (glewInit()!=GLEW_OK) Fatal("Error initializing GLEW\n");
     #endif
+
+    initializeObjects();
 
     glutDisplayFunc(display);
 
