@@ -186,7 +186,7 @@ void HaloFront()
 
     glPopMatrix();
 }
-void Halo()
+void Halo(unsigned int carbon_fiber)
 {
     glPushMatrix();
     glTranslated(0,18,65);

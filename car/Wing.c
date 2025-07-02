@@ -78,7 +78,7 @@ Vec2 W_Nose_Back_B[3] ={
 };
 
 
-void Nose()
+void Nose(unsigned int tex_top, unsigned int tex_red)
 {
     float white[] = {1,1,1,1};
     float black[] = {0,0,0,1};
@@ -175,7 +175,7 @@ void Nose()
 }
 
 
-void Nose_Back()
+void Nose_Back(unsigned int red)
 {
     float white[] = {1,1,1,1};
     float black[] = {0,0,0,1};
@@ -271,7 +271,7 @@ void Nose_Back()
 }
 
 
-void WingBladeFirst(int tipF, float x, float y, float z, int isFirst)
+void WingBladeFirst(int tipF, float x, float y, float z, int isFirst, unsigned int tex_carbonFiber)
 {
     float white[] = {1,1,1,1};
     float black[] = {0,0,0,1};
@@ -462,7 +462,7 @@ void WingBladeFirst(int tipF, float x, float y, float z, int isFirst)
 
 }
 
-void WingBladeLast(float x, float y, float z, int flip)
+void WingBladeLast(float x, float y, float z, int flip, unsigned int tex_carbonFiber)
 {
     float white[] = {1,1,1,1};
     float black[] = {0,0,0,1};
@@ -540,7 +540,7 @@ void WingBladeLast(float x, float y, float z, int flip)
 
 }
 
-void WingSide(float x, float y, float z)
+void WingSide(float x, float y, float z, unsigned int tex_carbonFiber)
 {
     float white[] = {1,1,1,1};
     float black[] = {0,0,0,1};
@@ -576,16 +576,16 @@ void WingSide(float x, float y, float z)
 }
 
 
-void Wing()
+void Wing(unsigned int tex_carbonFiber, unsigned int tex_Nose_Top, unsigned int tex_red)
 {
     glPushMatrix();
-    Nose();
-    Nose_Back();
-    WingBladeFirst(2, 0, 1.5, 3, 1);
-    WingBladeFirst(0, 0, 2, 5.5, 0);
-    WingBladeFirst(0, 0, 2.5, 8, 0);
+    Nose(tex_Nose_Top, tex_red);
+    Nose_Back(tex_red);
+    WingBladeFirst(2, 0, 1.5, 3, 1, tex_carbonFiber);
+    WingBladeFirst(0, 0, 2, 5.5, 0, tex_carbonFiber);
+    WingBladeFirst(0, 0, 2.5, 8, 0, tex_carbonFiber);
 
-    WingBladeLast(0, 3, 10.5, 0);
+    WingBladeLast(0, 3, 10.5, 0, tex_carbonFiber);
 
     // glPushMatrix();
     // glRotated(180, 1, 1, 1);

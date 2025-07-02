@@ -1,8 +1,23 @@
 #include "Utils.h"
 #include "CarParts.h"
 
-void Wing_Flaps_F()
+void Wing_Flaps_F(unsigned int carbon_fiber)
 {
+
+    float white[] = {1,1,1,1};
+    float black[] = {0,0,0,1};
+    glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE, white);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,black);
+
+
+
+    glEnable(GL_TEXTURE_2D);
+    glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
+    // glColor3f(1,1,1);
+    glBindTexture(GL_TEXTURE_2D,carbon_fiber);
+
     Vec3 Start1 = {13.5355,25,98};
     Vec3 Start2 = {13.9855,26.35,101.6};
 
@@ -49,8 +64,8 @@ void Wing_Flaps_F()
 
         Vec3 N = cross(T, W);
         glNormal3f(N.ax1, N.ax2, N.ax3);
-        glVertex3f(point1.ax1, point1.ax2, point1.ax3);
-        glVertex3f(point2.ax1, point2.ax2, point2.ax3);
+        glTexCoord2f(0,t);glVertex3f(point1.ax1, point1.ax2, point1.ax3);
+        glTexCoord2f(1,t);glVertex3f(point2.ax1, point2.ax2, point2.ax3);
     }
     glEnd();
 
@@ -89,14 +104,30 @@ void Wing_Flaps_F()
 
         Vec3 N = cross(W, T);
         glNormal3f(N.ax1, N.ax2, N.ax3);
-        glVertex3f(point1.ax1, point1.ax2-0.01, point1.ax3);
-        glVertex3f(point2.ax1, point2.ax2-0.01, point2.ax3);
+        glTexCoord2f(0,t);glVertex3f(point1.ax1, point1.ax2-0.01, point1.ax3);
+        glTexCoord2f(1,t);glVertex3f(point2.ax1, point2.ax2-0.01, point2.ax3);
     }
     glEnd();
+
+    glDisable(GL_TEXTURE_2D);
 }
 
-void Wing_Flaps_B()
+void Wing_Flaps_B(unsigned int carbon_fiber)
 {
+    float white[] = {1,1,1,1};
+    float black[] = {0,0,0,1};
+    glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE, white);
+    glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,black);
+
+
+
+    glEnable(GL_TEXTURE_2D);
+    glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
+    // glColor3f(1,1,1);
+    glBindTexture(GL_TEXTURE_2D,carbon_fiber);
+
     Vec3 Start1 = {13.5355+0.55,25+1.65,98+4.4};
     Vec3 Start2 = {14.5355,28,106};
 
@@ -144,8 +175,8 @@ void Wing_Flaps_B()
         Vec3 N = cross(T, W);
         glNormal3f(N.ax1, N.ax2, N.ax3);
 
-        glVertex3f(point1.ax1, point1.ax2, point1.ax3);
-        glVertex3f(point2.ax1, point2.ax2, point2.ax3);
+        glTexCoord2f(0,t);glVertex3f(point1.ax1, point1.ax2, point1.ax3);
+        glTexCoord2f(1,t);glVertex3f(point2.ax1, point2.ax2, point2.ax3);
     }
     glEnd();
 
@@ -185,13 +216,15 @@ void Wing_Flaps_B()
         Vec3 N = cross(W, T);
         glNormal3f(N.ax1, N.ax2, N.ax3);
 
-        glVertex3f(point1.ax1, point1.ax2-0.01, point1.ax3);
-        glVertex3f(point2.ax1, point2.ax2-0.01, point2.ax3);
+        glTexCoord2f(0,t);glVertex3f(point1.ax1, point1.ax2-0.01, point1.ax3);
+        glTexCoord2f(1,t);glVertex3f(point2.ax1, point2.ax2-0.01, point2.ax3);
     }
     glEnd();
+
+    glDisable(GL_TEXTURE_2D);
 }
 
-void Wing_Holder(char side)
+void Wing_Holder(char side, unsigned int carbon_fiber)
 {
     glPushMatrix();
     float white[] = {1,1,1,1};
@@ -201,6 +234,12 @@ void Wing_Holder(char side)
     glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE, white);
     glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,black);
 
+
+
+    glEnable(GL_TEXTURE_2D);
+    glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
+    // glColor3f(1,1,1);
+    glBindTexture(GL_TEXTURE_2D,carbon_fiber);
 
     glPushMatrix();
 
@@ -235,8 +274,8 @@ void Wing_Holder(char side)
             Vec3 N = cross(T, W);  
             
             glNormal3f(N.ax1, N.ax2, N.ax3);
-            glVertex3f(10+x, y, 102 - (2+2*t));
-            glVertex3f(11+x, y, 102 + (2+2*t));
+            glTexCoord2f(0,t);glVertex3f(10+x, y, 102 - (2+2*t));
+            glTexCoord2f(1,t);glVertex3f(11+x, y, 102 + (2+2*t));
         }
         glEnd();
         glBegin(GL_QUAD_STRIP);
@@ -264,13 +303,14 @@ void Wing_Holder(char side)
             Vec3 N = cross(T, W);  
             
             glNormal3f(N.ax1, N.ax2, N.ax3);
-            glVertex3f(10+x, y, 102 - (2+2*t));
-            glVertex3f(11+x, y, 102 + (2+2*t));
+            glTexCoord2f(0,t);glVertex3f(10+x, y, 102 - (2+2*t));
+            glTexCoord2f(1,t);glVertex3f(11+x, y, 102 + (2+2*t));
         }
         glEnd();
     }
     else
     {
+        
         glBegin(GL_QUAD_STRIP);
         for(int i =0;i<=samples;i++)
         {
@@ -294,8 +334,8 @@ void Wing_Holder(char side)
             Vec3 N = cross(T, W);  
             
             glNormal3f(N.ax1, N.ax2, N.ax3);
-            glVertex3f(-(10+x), y, 102 - (2+2*t));
-            glVertex3f(-(11+x), y, 102 + (2+2*t));
+            glTexCoord2f(0,t);glVertex3f(-(10+x), y, 102 - (2+2*t));
+            glTexCoord2f(1,t);glVertex3f(-(11+x), y, 102 + (2+2*t));
         }
         glEnd();
 
@@ -322,66 +362,71 @@ void Wing_Holder(char side)
             Vec3 N = cross(T, W);  
             
             glNormal3f(N.ax1, N.ax2, N.ax3);
-            glVertex3f(-(10+x), y, 102 - (2+2*t));
-            glVertex3f(-(11+x), y, 102 + (2+2*t));
+            glTexCoord2f(0,t);glVertex3f(-(10+x), y, 102 - (2+2*t));
+            glTexCoord2f(1,t);glVertex3f(-(11+x), y, 102 + (2+2*t));
         }
         glEnd();
 
     }
+    glDisable(GL_TEXTURE_2D);
 
+    glEnable(GL_TEXTURE_2D);
     glBegin(GL_POLYGON);
     glNormal3f(0,1,0);
-    glVertex3f(5, 12, 100);
-    glVertex3f(6, 12, 104);
-    glVertex3f(-6, 12, 104);
-    glVertex3f(-5, 12, 100);
+    glTexCoord2f(0,1);glVertex3f(5, 12, 100);
+    glTexCoord2f(1,1);glVertex3f(6, 12, 104);
+    glTexCoord2f(1,0);glVertex3f(-6, 12, 104);
+    glTexCoord2f(1,0);glVertex3f(-5, 12, 100);
     glEnd();
     glBegin(GL_POLYGON);
     glNormal3f(0,-1,0);
-    glVertex3f(5, 12-0.01, 100);
-    glVertex3f(6, 12-0.01, 104);
-    glVertex3f(-6, 12-0.01, 104);
-    glVertex3f(-5, 12-0.01, 100);
+    glTexCoord2f(0,1);glVertex3f(5, 12-0.01, 100);
+    glTexCoord2f(1,1);glVertex3f(6, 12-0.01, 104);
+    glTexCoord2f(1,0);glVertex3f(-6, 12-0.01, 104);
+    glTexCoord2f(1,0);glVertex3f(-5, 12-0.01, 100);
     glEnd();
+    
 
 
     glBegin(GL_POLYGON);
     glNormal3f(-1,0,0);
-    glVertex3f(13.5355,25,98);
-    glVertex3f(14.5355,25,106);
-    glVertex3f(14.5355,28,106);
+    glTexCoord2f(0,1);glVertex3f(13.5355,25,98);
+    glTexCoord2f(1,1);glVertex3f(14.5355,25,106);
+    glTexCoord2f(1,0);glVertex3f(14.5355,28,106);
     glEnd();
 
     glBegin(GL_POLYGON);
     glNormal3f(1,0,0);
-    glVertex3f(13.5355+0.01,25,98);
-    glVertex3f(14.5355+0.01,25,106);
-    glVertex3f(14.5355+0.01,28,106);
+    glTexCoord2f(0,1);glVertex3f(13.5355+0.01,25,98);
+    glTexCoord2f(1,1);glVertex3f(14.5355+0.01,25,106);
+    glTexCoord2f(1,0);glVertex3f(14.5355+0.01,28,106);
     glEnd();
 
     glBegin(GL_POLYGON);
     glNormal3f(1,0,0);
-    glVertex3f(-13.5355,25,98);
-    glVertex3f(-14.5355,25,106);
-    glVertex3f(-14.5355,28,106);
+    glTexCoord2f(0,1);glVertex3f(-13.5355,25,98);
+    glTexCoord2f(1,1);glVertex3f(-14.5355,25,106);
+    glTexCoord2f(1,0);glVertex3f(-14.5355,28,106);
     glEnd();
     glBegin(GL_POLYGON);
     glNormal3f(-1,0,0);
-    glVertex3f(-13.5355-0.01,25,98);
-    glVertex3f(-14.5355-0.01,25,106);
-    glVertex3f(-14.5355-0.01,28,106);
+    glTexCoord2f(0,1);glVertex3f(-13.5355-0.01,25,98);
+    glTexCoord2f(1,1);glVertex3f(-14.5355-0.01,25,106);
+    glTexCoord2f(1,0);glVertex3f(-14.5355-0.01,28,106);
     glEnd();
 
-    Wing_Flaps_F();
-    Wing_Flaps_B();
+    glDisable(GL_TEXTURE_2D);
+
+    Wing_Flaps_F(carbon_fiber);
+    Wing_Flaps_B(carbon_fiber);
 
     glPopMatrix();
     glPopMatrix();
 }
 
 
-void RearWing()
+void RearWing(unsigned int carbon_fiber)
 {
-    Wing_Holder('r');
-    Wing_Holder('l');
+    Wing_Holder('r', carbon_fiber);
+    Wing_Holder('l', carbon_fiber);
 }

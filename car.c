@@ -491,10 +491,10 @@ void NewCar(unsigned int tex_end, unsigned int tex_wheel, unsigned int tex_rim, 
         // glRotated(-180, 0,1,0);
         glScaled(0.7,0.7,0.7);
         
-        Wing();
-        Monocoque_Front();
-        Halo();
-        RearWing();
+        Wing(tex_end, tex_nose, tex_nose_side);
+        Monocoque_Front(tex_end, text_side_strip, tex_nose_side);
+        Halo(tex_end);
+        RearWing(tex_end);
         
         glPopMatrix();
         glTranslated(0,0,2);
