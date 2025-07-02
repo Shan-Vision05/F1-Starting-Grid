@@ -26,7 +26,7 @@ inline float dot(const Vec3 a, const Vec3 b) {
          + a.ax3 * b.ax3;
 }
 
-void HaloTube(char side)
+void HaloTube(char side, unsigned int carbon_fiber)
 {
 
     float white[] = {1,1,1,1};
@@ -36,6 +36,12 @@ void HaloTube(char side)
     glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE, white);
     glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,black);
 
+
+
+    glEnable(GL_TEXTURE_2D);
+    glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
+    // glColor3f(1,1,1);
+    glBindTexture(GL_TEXTURE_2D,carbon_fiber);
 
     glPushMatrix();
 
@@ -85,13 +91,14 @@ void HaloTube(char side)
             // float s = th / 360.0; 
             // top
             // glTexCoord2f(s, 1.0);
+            float dth = (float)th/360.0;
             Vec3 Offset_1 = {
                 N1.ax1 * Cos(th)* (1+t) + BN1.ax1 * Sin(th),
                 N1.ax2 * Cos(th)* (1+t) + BN1.ax2 * Sin(th),
                 N1.ax3 * Cos(th)* (1+t) + BN1.ax3 * Sin(th),
             };
             glNormal3f(Offset_1.ax1, Offset_1.ax2, Offset_1.ax3);
-            glVertex3f(point1.ax1 + Offset_1.ax1, Offset_1.ax2 , point1.ax2 + Offset_1.ax3);
+            glTexCoord2f(dth,t_1);glVertex3f(point1.ax1 + Offset_1.ax1, Offset_1.ax2 , point1.ax2 + Offset_1.ax3);
             // bottom
             // glTexCoord2f(s, 0.0);
             Vec3 Offset_2 = {
@@ -100,19 +107,19 @@ void HaloTube(char side)
                 N2.ax3 * Cos(th)* (1+t_1)+ BN2.ax3 * Sin(th),
             };
             glNormal3f(Offset_2.ax1, Offset_2.ax2, Offset_2.ax3);
-            glVertex3f(point2.ax1 +Offset_2.ax1, Offset_2.ax2, point2.ax2+Offset_2.ax3);  
+            glTexCoord2f(dth,t_1);glVertex3f(point2.ax1 +Offset_2.ax1, Offset_2.ax2, point2.ax2+Offset_2.ax3);  
         }
     }
     
     glEnd();
-    // glDisable(GL_TEXTURE_2D);
+    glDisable(GL_TEXTURE_2D);
     
 
     glPopMatrix();
 }
 
 
-void HaloFront()
+void HaloFront(unsigned int carbon_fiber)
 {
     float white[] = {1,1,1,1};
     float black[] = {0,0,0,1};
@@ -120,6 +127,13 @@ void HaloFront()
     glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
     glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE, white);
     glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,black);
+
+
+
+    glEnable(GL_TEXTURE_2D);
+    glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
+    // glColor3f(1,1,1);
+    glBindTexture(GL_TEXTURE_2D,carbon_fiber);
 
 
     glPushMatrix();
@@ -160,13 +174,14 @@ void HaloFront()
             // float s = th / 360.0; 
             // top
             // glTexCoord2f(s, 1.0);
+            float dth = (float)th/360.0;
             Vec3 Offset_1 = {
                 N1.ax1 * Cos(th) + BN1.ax1 * Sin(th) * (1+2*t),
                 N1.ax2 * Cos(th) + BN1.ax2 * Sin(th) * (1+2*t),
                 N1.ax3 * Cos(th) + BN1.ax3 * Sin(th) * (1+2*t),
             };
             glNormal3f(Offset_1.ax1, Offset_1.ax2, Offset_1.ax3);
-            glVertex3f( Offset_1.ax1, point1.ax1 +Offset_1.ax2 , point1.ax2 + Offset_1.ax3);
+            glTexCoord2f(dth,t_1);glVertex3f( Offset_1.ax1, point1.ax1 +Offset_1.ax2 , point1.ax2 + Offset_1.ax3);
             // bottom
             // glTexCoord2f(s, 0.0);
             Vec3 Offset_2 = {
@@ -175,13 +190,13 @@ void HaloFront()
                 N2.ax3 * Cos(th)+ BN2.ax3 * Sin(th) * (1+2*t_1),
             };
             glNormal3f(Offset_2.ax1, Offset_2.ax2, Offset_2.ax3);
-            glVertex3f(Offset_2.ax1, point2.ax1 +Offset_2.ax2, point2.ax2+Offset_2.ax3);  
+            glTexCoord2f(dth,t_1);glVertex3f(Offset_2.ax1, point2.ax1 +Offset_2.ax2, point2.ax2+Offset_2.ax3);  
         }
 
     }
     
     glEnd();
-    // glDisable(GL_TEXTURE_2D);
+    glDisable(GL_TEXTURE_2D);
     
 
     glPopMatrix();
@@ -192,8 +207,8 @@ void Halo(unsigned int carbon_fiber)
     glTranslated(0,18,65);
     glScaled(0.7,0.5,0.7);
     glColor3f(0.2,0.2,0.2);
-        HaloTube('l');
-        HaloTube('r');
-        HaloFront();
+        HaloTube('l', carbon_fiber);
+        HaloTube('r', carbon_fiber);
+        HaloFront(carbon_fiber);
     glPopMatrix();
 }

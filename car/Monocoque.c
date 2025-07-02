@@ -102,6 +102,14 @@ void Monocoque_Front(unsigned int carbon_fiber, unsigned int mono_side,  unsigne
     glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,black);
 
 
+
+    glEnable(GL_TEXTURE_2D);
+    glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
+    // glColor3f(1,1,1);
+    glBindTexture(GL_TEXTURE_2D,red);
+
+
+
     glPushMatrix();
     // glTranslated(0, 1, 0);
     int samples = 10;
@@ -128,8 +136,8 @@ void Monocoque_Front(unsigned int carbon_fiber, unsigned int mono_side,  unsigne
         
         glNormal3f(N.ax1, N.ax2, N.ax3);
 
-        glVertex3f(  -nose_w, point.ax2, point.ax1);
-        glVertex3f(  nose_w, point.ax2, point.ax1);
+        glTexCoord2f(0,t);glVertex3f(  -nose_w, point.ax2, point.ax1);
+        glTexCoord2f(1,t);glVertex3f(  nose_w, point.ax2, point.ax1);
     }
     glEnd();
 
@@ -150,8 +158,8 @@ void Monocoque_Front(unsigned int carbon_fiber, unsigned int mono_side,  unsigne
         
         glNormal3f(N.ax1, N.ax2, N.ax3);
 
-        glVertex3f(  -nose_w, point.ax2, point.ax1);
-        glVertex3f(  nose_w, point.ax2, point.ax1);
+        glTexCoord2f(0,t);glVertex3f(  -nose_w, point.ax2, point.ax1);
+        glTexCoord2f(1,t);glVertex3f(  nose_w, point.ax2, point.ax1);
     }
     glEnd();
 
@@ -174,8 +182,8 @@ void Monocoque_Front(unsigned int carbon_fiber, unsigned int mono_side,  unsigne
 
         glNormal3f(N.ax1, N.ax2, N.ax3);
 
-        glVertex3f(  nose_w, point1.ax2, point1.ax1);
-        glVertex3f(  nose_w, point2.ax2, point2.ax1);
+        glTexCoord2f(0,t);glVertex3f(  nose_w, point1.ax2, point1.ax1);
+        glTexCoord2f(1,t);glVertex3f(  nose_w, point2.ax2, point2.ax1);
     }
     glEnd();
 
@@ -196,8 +204,8 @@ void Monocoque_Front(unsigned int carbon_fiber, unsigned int mono_side,  unsigne
 
         glNormal3f(N.ax1, N.ax2, N.ax3);
 
-        glVertex3f(  -nose_w, point1.ax2, point1.ax1);
-        glVertex3f(  -nose_w, point2.ax2, point2.ax1);
+        glTexCoord2f(0,t);glVertex3f(  -nose_w, point1.ax2, point1.ax1);
+        glTexCoord2f(1,t);glVertex3f(  -nose_w, point2.ax2, point2.ax1);
     }
 
     glEnd();
@@ -209,4 +217,5 @@ void Monocoque_Front(unsigned int carbon_fiber, unsigned int mono_side,  unsigne
 
 
     glPopMatrix();
+    glDisable(GL_TEXTURE_2D);
 }
