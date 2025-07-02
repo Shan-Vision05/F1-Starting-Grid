@@ -189,9 +189,9 @@ void HaloFront()
 void Halo()
 {
     glPushMatrix();
-    glTranslated(0,19,65);
+    glTranslated(0,18,65);
     glScaled(0.7,0.5,0.7);
-    glColor3f(0.3,0.3,0.3);
+    glColor3f(0.2,0.2,0.2);
         HaloTube('l');
         HaloTube('r');
         HaloFront();

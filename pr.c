@@ -583,8 +583,8 @@ void key(unsigned char ch, int x, int y)
         mode = (mode+1)%3;
     }
 
-    // else if(ch == 'c' || ch =='C')
-    //     showCarOnly = (showCarOnly+1)%2;
+    else if(ch == 'c' || ch =='C')
+        showCarOnly = (showCarOnly+1)%2;
     
     // else if (ch == 'i' || ch == 'I')
     //   light = 1-light;
@@ -625,8 +625,8 @@ void key(unsigned char ch, int x, int y)
     //     light_z -= 0.1;
     // else if (ch == 'Y' && ylight <=100)
     //     ylight += 5;
-    // else if (ch == 'y' && ylight > -100)
-    //     ylight -= 5;
+    else if (ch == 'y' && ylight > -100)
+        ylight -= 5;
 
 
     else if (ch == ' ')
@@ -650,9 +650,9 @@ void key(unsigned char ch, int x, int y)
         // Scale X axis
         case 'x': sx = fmax(0.1f, sx - SCALE_D); break;
         case 'X': sx += SCALE_D;              break;
-        // Scale Y axis
-        case 'y': sy = fmax(0.1f, sy - SCALE_D); break;
-        case 'Y': sy += SCALE_D;              break;
+        // // Scale Y axis
+        // case 'y': sy = fmax(0.1f, sy - SCALE_D); break;
+        // case 'Y': sy += SCALE_D;              break;
         // Scale Z axis
         case 'z': sz = fmax(0.1f, sz - SCALE_D); break;
         case 'Z': sz += SCALE_D;              break;
