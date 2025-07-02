@@ -4,7 +4,7 @@
 struct Vec2 { float x, y; };
 struct Vec3 { float x, y, z; };
 
-void car(unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int);
+// void car(unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int);
 
 void NewCar(unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int);
 #endif

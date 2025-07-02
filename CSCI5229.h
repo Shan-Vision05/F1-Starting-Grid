@@ -59,6 +59,8 @@ void Print(const char* format , ...) __attribute__ ((format(printf,1,2)));
 #else
 void Print(const char* format , ...);
 #endif
+typedef struct { float ax1, ax2; } Vec2;
+typedef struct { float ax1, ax2, ax3; } Vec3;
 void ErrCheck(const char* where);
 void Fatal(const char* format , ...);
 unsigned int LoadTexBMP(const char* file);
