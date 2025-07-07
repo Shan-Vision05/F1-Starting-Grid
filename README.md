@@ -72,7 +72,7 @@ Note:
 
     2. I’ve chosen the garage to demonstrate 3D object selection because, since the floor isn’t part of the garage, you’ll see the object only gets selected when you click on its walls or roof. This proves that the second stage of my selection i.e., the per-triangle hit test works.
 
-Aknowlegments:
+<!-- Aknowlegments:
 
     1. The imports were taken from example. Didn't make any modifications as it had all the header files i needed.
 
@@ -93,7 +93,7 @@ Aknowlegments:
     9. Most of the fuctions have the basic building blocks inspired from examples
 
     10. For the per triangle intersection verification for 3D object selection. I've used multiple sources to understand the concept. Since I've lost touch with pointer in C, I took ChatGPT's help to store the vertexs in the structure pickable across different c files(this is the structure that contains all the object information like center id etc.)
-    sources: https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-sphere-intersection.html?utm_source=chatgpt.com, https://www.youtube.com/watch?v=fK1RPmF_zjQ, https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm?utm_source=chatgpt.com
+    sources: https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-sphere-intersection.html?utm_source=chatgpt.com, https://www.youtube.com/watch?v=fK1RPmF_zjQ, https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm?utm_source=chatgpt.com -->
 
 
 Code Structure and Description:
