@@ -61,6 +61,20 @@ void Print(const char* format , ...);
 #endif
 typedef struct { float ax1, ax2; } Vec2;
 typedef struct { float ax1, ax2, ax3; } Vec3;
+
+
+typedef struct {
+    int id;
+    Vec3   center;
+    Vec3 dim;
+    float  radius;
+    Vec3 * vertices;
+    int size;
+    Vec3 bbox;
+} Object;
+
+extern GLdouble viewM[16];
+
 void ErrCheck(const char* where);
 void Fatal(const char* format , ...);
 unsigned int LoadTexBMP(const char* file);

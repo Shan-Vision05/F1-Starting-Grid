@@ -1,5 +1,5 @@
 # Example 12
-EXE=pr
+EXE=final
 vpath %.c car
 vpath %.h car
 
@@ -34,7 +34,7 @@ Halo.o: car/Halo.c car/Utils.h CSCI5229.h car/CarParts.h
 RearWing.o: car/RearWing.c car/Utils.h CSCI5229.h car/CarParts.h
 
 
-pr.o: pr.c CSCI5229.h objects.h car/CarParts.h 
+final.o: final.c CSCI5229.h objects.h car/CarParts.h 
 objects.o: objects.c CSCI5229.h objects.h
 
 print.o: print.c CSCI5229.h
@@ -53,7 +53,7 @@ CSCI5229.a:print.o loadtexbmp.o errcheck.o fatal.o Utils.o Wing.o Monocoque.o Ha
 	g++ -c $(CFLG)  $<
 
 #  Link
-pr:pr.o  objects.o car.o CSCI5229.a
+final:final.o  objects.o car.o CSCI5229.a
 	gcc $(CFLG) -o $@ $^  $(LIBS)
 
 #  Clean

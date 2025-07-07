@@ -20,7 +20,7 @@ Vec2 Mono_Front_B[5] ={
 
 void cube_mono(double x,double y,double z,
     double dx,double dy,double dz,
-    double th)
+    double th, unsigned int carbon_fiber)
 {
 
     float white[] = {1,1,1,1};
@@ -30,9 +30,7 @@ void cube_mono(double x,double y,double z,
     glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE, white);
     glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,black);
 
-    //  Save transformation
     glPushMatrix();
-    //  Offset
     glTranslated(x,y,z);
     glRotated(th,0,0,1);
     glScaled(dx,dy,dz);
@@ -41,58 +39,55 @@ void cube_mono(double x,double y,double z,
 
     glEnable(GL_TEXTURE_2D);
     glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
-    // glColor3f(1,1,1);
-    glBindTexture(GL_TEXTURE_2D,(unsigned int) 0);
+    glBindTexture(GL_TEXTURE_2D,carbon_fiber);
 
-
-    //  Cube
+    int s = 1;
     glBegin(GL_QUADS);
     //  Front
     // glColor3f(1,0,0);
     glNormal3f(0,0,1);
     glTexCoord2f(0,0); glVertex3f(-1,-1, 1);
-    glTexCoord2f(1,0); glVertex3f(+1,-1, 1);
-    glTexCoord2f(1,1); glVertex3f(+1,+1, 1);
-    glTexCoord2f(0,1); glVertex3f(-1,+1, 1);
+    glTexCoord2f(s,0); glVertex3f(+1,-1, 1);
+    glTexCoord2f(s,s); glVertex3f(+1,+1, 1);
+    glTexCoord2f(0,s); glVertex3f(-1,+1, 1);
     //  Back
     glNormal3f(0,0,-1);
     glTexCoord2f(0,0); glVertex3f(+1,-1,-1);
-    glTexCoord2f(1,0); glVertex3f(-1,-1,-1);
-    glTexCoord2f(1,1); glVertex3f(-1,+1,-1);
-    glTexCoord2f(0,1); glVertex3f(+1,+1,-1);
+    glTexCoord2f(s,0); glVertex3f(-1,-1,-1);
+    glTexCoord2f(s,s); glVertex3f(-1,+1,-1);
+    glTexCoord2f(0,s); glVertex3f(+1,+1,-1);
     //  Right
     glNormal3f(1,0,0);
     glTexCoord2f(0,0); glVertex3f(+1,-1,+1);
-    glTexCoord2f(1,0); glVertex3f(+1,-1,-1);
-    glTexCoord2f(1,1); glVertex3f(+1,+1,-1);
-    glTexCoord2f(0,1); glVertex3f(+1,+1,+1);
+    glTexCoord2f(s,0); glVertex3f(+1,-1,-1);
+    glTexCoord2f(s,s); glVertex3f(+1,+1,-1);
+    glTexCoord2f(0,s); glVertex3f(+1,+1,+1);
     //  Left
     glNormal3f(-1,0,0);
     glTexCoord2f(0,0); glVertex3f(-1,-1,-1);
-    glTexCoord2f(1,0); glVertex3f(-1,-1,+1);
-    glTexCoord2f(1,1); glVertex3f(-1,+1,+1);
-    glTexCoord2f(0,1); glVertex3f(-1,+1,-1);
+    glTexCoord2f(s,0); glVertex3f(-1,-1,+1);
+    glTexCoord2f(s,s); glVertex3f(-1,+1,+1);
+    glTexCoord2f(0,s); glVertex3f(-1,+1,-1);
     //  Topfrom image
     glNormal3f(0,1,0);
     glTexCoord2f(0,0); glVertex3f(-1,+1,+1);
-    glTexCoord2f(1,0); glVertex3f(+1,+1,+1);
-    glTexCoord2f(1,1); glVertex3f(+1,+1,-1);
-    glTexCoord2f(0,1); glVertex3f(-1,+1,-1);
+    glTexCoord2f(s,0); glVertex3f(+1,+1,+1);
+    glTexCoord2f(s,s); glVertex3f(+1,+1,-1);
+    glTexCoord2f(0,s); glVertex3f(-1,+1,-1);
     //  Bottom
     glNormal3f(0,-1,0);
     glTexCoord2f(0,0); glVertex3f(-1,-1,-1);
-    glTexCoord2f(1,0); glVertex3f(+1,-1,-1);
-    glTexCoord2f(1,1); glVertex3f(+1,-1,+1);
-    glTexCoord2f(0,1); glVertex3f(-1,-1,+1);
+    glTexCoord2f(s,0); glVertex3f(+1,-1,-1);
+    glTexCoord2f(s,s); glVertex3f(+1,-1,+1);
+    glTexCoord2f(0,s); glVertex3f(-1,-1,+1);
     //  End
     glEnd();
 
     glDisable(GL_TEXTURE_2D);
-    //  Undo transformations
     glPopMatrix();
 }
 
-void Monocoque_Front()
+void Monocoque_Front(unsigned int carbon_fiber, unsigned int mono_side,  unsigned int red)
 {
     float white[] = {1,1,1,1};
     float black[] = {0,0,0,1};
@@ -102,8 +97,14 @@ void Monocoque_Front()
     glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,black);
 
 
+
+    glEnable(GL_TEXTURE_2D);
+    glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
+    glBindTexture(GL_TEXTURE_2D,red);
+
+
+
     glPushMatrix();
-    // glTranslated(0, 1, 0);
     int samples = 10;
     glColor3f(0.5, 0.0, 0.0);
 
@@ -112,7 +113,6 @@ void Monocoque_Front()
     
 
     glBegin(GL_TRIANGLE_STRIP);
-    //Top part of the Nose
     for(int i=0;i<=samples;i++)
     {
         float t = (float)i / (float)samples;
@@ -128,12 +128,11 @@ void Monocoque_Front()
         
         glNormal3f(N.ax1, N.ax2, N.ax3);
 
-        glVertex3f(  -nose_w, point.ax2, point.ax1);
-        glVertex3f(  nose_w, point.ax2, point.ax1);
+        glTexCoord2f(0,t);glVertex3f(  -nose_w, point.ax2, point.ax1);
+        glTexCoord2f(1,t);glVertex3f(  nose_w, point.ax2, point.ax1);
     }
     glEnd();
 
-    // Bottom Part of the nose
     glBegin(GL_TRIANGLE_STRIP);
     for(int i=0;i<=samples;i++)
     {
@@ -150,8 +149,8 @@ void Monocoque_Front()
         
         glNormal3f(N.ax1, N.ax2, N.ax3);
 
-        glVertex3f(  -nose_w, point.ax2, point.ax1);
-        glVertex3f(  nose_w, point.ax2, point.ax1);
+        glTexCoord2f(0,t);glVertex3f(  -nose_w, point.ax2, point.ax1);
+        glTexCoord2f(1,t);glVertex3f(  nose_w, point.ax2, point.ax1);
     }
     glEnd();
 
@@ -174,8 +173,8 @@ void Monocoque_Front()
 
         glNormal3f(N.ax1, N.ax2, N.ax3);
 
-        glVertex3f(  nose_w, point1.ax2, point1.ax1);
-        glVertex3f(  nose_w, point2.ax2, point2.ax1);
+        glTexCoord2f(0,t);glVertex3f(  nose_w, point1.ax2, point1.ax1);
+        glTexCoord2f(1,t);glVertex3f(  nose_w, point2.ax2, point2.ax1);
     }
     glEnd();
 
@@ -196,16 +195,16 @@ void Monocoque_Front()
 
         glNormal3f(N.ax1, N.ax2, N.ax3);
 
-        glVertex3f(  -nose_w, point1.ax2, point1.ax1);
-        glVertex3f(  -nose_w, point2.ax2, point2.ax1);
+        glTexCoord2f(0,t);glVertex3f(  -nose_w, point1.ax2, point1.ax1);
+        glTexCoord2f(1,t);glVertex3f(  -nose_w, point2.ax2, point2.ax1);
     }
 
     glEnd();
 
-    // end setup
-    // y:13 z = 96
-    cube_mono(0, 13, 96, 2, 2, 10, 0);
+    glColor3f(0.5,0.5,0.5);
+    cube_mono(0, 13, 96, 2, 2, 10, 0, carbon_fiber);
 
 
     glPopMatrix();
+    glDisable(GL_TEXTURE_2D);
 }

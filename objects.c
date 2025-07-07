@@ -1,5 +1,9 @@
 #include "CSCI5229.h"
 #include "objects.h"
+#include "car/Utils.h"
+
+Vec3 Garage_Vertices[200];
+int garage_vert_size = 0;
 
 void Plane(int type, 
     double x, double y, double z,
@@ -591,65 +595,137 @@ void StartLights(double h, double w, unsigned int texture, unsigned int tex_ligh
     StartLight(w,h,-6, texture, tex_light);
 }
 
-// void renderRailings(double x, double y,unsigned int tex) {
-//     const int   POSTS        = 8;          // number of vertical posts
-//     const double SPACING      = 5;        // distance between posts
-//     const double POST_HEIGHT  = 1.2;        // height of each post
-//     const double BOTTOM_RAILY = 0.3;        // height of bottom rail
-//     const double TOP_RAILY    = 1.0;        // height of top rail
-//     const double STARTX       = 0.0;        // x‐coordinate of first post
-//     const double Y            = 0.0;        // ground level (y)
-//     const double Z            = 0.0;        // z‐offset of railing
-//     glPushMatrix();
-//     glScaled(0.1, 1, 0.1);
-//     // 1) Vertical posts
-//     for(int i = -4; i < 4; i++) {
-//         cylinder(STARTX , Y, Z + i * SPACING,
-//                  2,     // height
-//                  0.0,             // no rotation
-//                  tex);
-//     }
 
-//     glPopMatrix();
-
-//     // 2) Horizontal rails (rotate cyl to lie along X)
-//     //    Bottom rail
-//     // glPushMatrix();
-//     //   glTranslated(STARTX, BOTTOM_RAILY, Z);
-//     //   glRotated(90.0, 0, 0, 1);  // spin Y–>X
-//     //   cylinder(0.0, 0.0, 0.0,
-//     //            20,  // length of rail
-//     //            0.0,
-//     //            tex);
-//     // glPopMatrix();
-
-//     // //    Top rail
-//     // glPushMatrix();
-//     //   glTranslated(STARTX, TOP_RAILY, Z);
-//     //   glRotated(90.0, 0, 0, 1);
-//     //   cylinder(0.0, 0.0, 0.0,
-//     //            20,
-//     //            0.0,
-//     //            tex);
-//     // glPopMatrix();
-
-// }
-
-
-void Garage(double x, double y, double z, double s, unsigned int texture1, unsigned int texture2)
+void cubeV(double x,double y,double z,
+    double dx,double dy,double dz,
+    double th, unsigned int texture)
 {
+
+float white[] = {1,1,1,1};
+float black[] = {0,0,0,1};
+glMaterialf(GL_FRONT_AND_BACK,GL_SHININESS,shiny);
+glMaterialfv(GL_FRONT_AND_BACK,GL_SPECULAR,white);
+glMaterialfv(GL_FRONT_AND_BACK,GL_DIFFUSE, white);
+glMaterialfv(GL_FRONT_AND_BACK,GL_EMISSION,black);
+
+//  Save transformation
+glPushMatrix();
+//  Offset
+glTranslated(x,y,z);
+glRotated(th,0,0,1);
+glScaled(dx,dy,dz);
+
+GLdouble MV[16];
+glGetDoublev(GL_MODELVIEW_MATRIX, MV);
+
+
+
+glEnable(GL_TEXTURE_2D);
+glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
+// glColor3f(1,1,1);
+glBindTexture(GL_TEXTURE_2D,texture);
+
+
+//  Cube
+glBegin(GL_QUADS);
+//  Front
+// glColor3f(1,0,0);
+glNormal3f(0,0,1);
+glTexCoord2f(0,0); glVertex3f(-1,-1, 1);
+glTexCoord2f(1,0); glVertex3f(+1,-1, 1);
+glTexCoord2f(1,1); glVertex3f(+1,+1, 1);
+glTexCoord2f(0,1); glVertex3f(-1,+1, 1);
+
+Model2World(-1,-1, 1,Garage_Vertices, &garage_vert_size,MV);
+Model2World(+1,-1, 1,Garage_Vertices, &garage_vert_size, MV);
+Model2World(+1,+1, 1,Garage_Vertices, &garage_vert_size,MV);
+Model2World(-1,+1, 1,Garage_Vertices, &garage_vert_size, MV);
+//  Back
+glNormal3f(0,0,-1);
+glTexCoord2f(0,0); glVertex3f(+1,-1,-1);
+glTexCoord2f(1,0); glVertex3f(-1,-1,-1);
+glTexCoord2f(1,1); glVertex3f(-1,+1,-1);
+glTexCoord2f(0,1); glVertex3f(+1,+1,-1);
+
+Model2World(+1,-1,-1,Garage_Vertices, &garage_vert_size, MV);
+Model2World(-1,-1,-1,Garage_Vertices, &garage_vert_size, MV);
+Model2World(-1,+1,-1,Garage_Vertices, &garage_vert_size, MV);
+Model2World(+1,+1,-1,Garage_Vertices, &garage_vert_size, MV);
+// //  Right
+glNormal3f(1,0,0);
+glTexCoord2f(0,0); glVertex3f(+1,-1,+1);
+glTexCoord2f(1,0); glVertex3f(+1,-1,-1);
+glTexCoord2f(1,1); glVertex3f(+1,+1,-1);
+glTexCoord2f(0,1); glVertex3f(+1,+1,+1);
+Model2World(+1,-1,+1,Garage_Vertices, &garage_vert_size, MV);
+Model2World(+1,-1,-1,Garage_Vertices, &garage_vert_size, MV);
+Model2World(+1,+1,-1,Garage_Vertices, &garage_vert_size, MV);
+Model2World(+1,+1,+1,Garage_Vertices, &garage_vert_size, MV);
+//  Left
+glNormal3f(-1,0,0);
+glTexCoord2f(0,0); glVertex3f(-1,-1,-1);
+glTexCoord2f(1,0); glVertex3f(-1,-1,+1);
+glTexCoord2f(1,1); glVertex3f(-1,+1,+1);
+glTexCoord2f(0,1); glVertex3f(-1,+1,-1);
+Model2World(-1,-1,-1,Garage_Vertices, &garage_vert_size, MV);
+Model2World(-1,-1,+1,Garage_Vertices, &garage_vert_size, MV);
+Model2World(-1,+1,+1,Garage_Vertices, &garage_vert_size, MV);
+Model2World(-1,+1,-1,Garage_Vertices, &garage_vert_size, MV);
+//  Topfrom image
+glNormal3f(0,1,0);
+glTexCoord2f(0,0); glVertex3f(-1,+1,+1);
+glTexCoord2f(1,0); glVertex3f(+1,+1,+1);
+glTexCoord2f(1,1); glVertex3f(+1,+1,-1);
+glTexCoord2f(0,1); glVertex3f(-1,+1,-1);
+Model2World(-1,+1,+1,Garage_Vertices, &garage_vert_size, MV);
+Model2World(+1,+1,+1,Garage_Vertices, &garage_vert_size, MV);
+Model2World(+1,+1,-1,Garage_Vertices, &garage_vert_size, MV);
+Model2World(-1,+1,-1,Garage_Vertices, &garage_vert_size, MV);
+//  Bottom
+glNormal3f(0,-1,0);
+glTexCoord2f(0,0); glVertex3f(-1,-1,-1);
+glTexCoord2f(1,0); glVertex3f(+1,-1,-1);
+glTexCoord2f(1,1); glVertex3f(+1,-1,+1);
+glTexCoord2f(0,1); glVertex3f(-1,-1,+1);
+Model2World(-1,-1,-1,Garage_Vertices, &garage_vert_size, MV);
+Model2World(+1,-1,-1,Garage_Vertices, &garage_vert_size, MV);
+Model2World(+1,-1,+1,Garage_Vertices, &garage_vert_size, MV);
+Model2World(-1,-1,+1,Garage_Vertices, &garage_vert_size, MV);
+//  End
+glEnd();
+
+glDisable(GL_TEXTURE_2D);
+//  Undo transformations
+glPopMatrix();
+}
+
+
+void Garage(double x, double y, double z, double s, unsigned int texture1, unsigned int texture2, int id)
+{
+    garage_vert_size =0;
     double wall_width = 0.05 * s;
     glPushMatrix();
     glTranslated(x,y,z);
 
-    cube(s,s/2, -s/2 -wall_width/2, s, s/2, wall_width, 0, texture1);
-    cube(s,s/2, +s/2 +wall_width/2, s, s/2, wall_width, 0, texture1);
+    
 
-    cube(s, s-wall_width, 0, s, wall_width, s/2, 0, texture1);
+    cubeV(s,s/2, -s/2 -wall_width/2, s, s/2, wall_width, 0, texture1);
+    cubeV(s,s/2, +s/2 +wall_width/2, s, s/2, wall_width, 0, texture1);
 
-    cube(2*s - wall_width,s/2,0, wall_width, s/2, s/2, 0, texture1);
+    cubeV(s, s-wall_width, 0, s, wall_width, s/2, 0, texture1);
+
+    cubeV(2*s - wall_width,s/2,0, wall_width, s/2, s/2, 0, texture1);
     // Plane(GL_POLYGON, s, 0,s/2, 0, 0, 0,  )
     Plane(GL_POLYGON, s, 0,0, 0, 0,0, 1, 1, 1, s, 2*s, texture2, 1, 1, 1);
+
+    registerPickableBox(
+        (Vec3) {x,y,z},
+        (Vec3){2*s, 2*s, 2*s},
+        3*s,
+        id,
+        Garage_Vertices,
+        garage_vert_size
+    );
 
     glPopMatrix();
 }
@@ -659,10 +735,14 @@ void Garages(double x, double y, double z, double s, unsigned int texture1, unsi
     double wall_width = 0.05 * s;
     double offset =  s + 2*wall_width;
 
-    glPushMatrix();
-    glTranslated(x, y, z);
-    for(int i= -9;i <=10;i++)
-        Garage(0,0,i*offset, s, texture1, texture2);
-    glPopMatrix();
+        for(int i= 0;i <=2;i++)
+        {
+        glPushMatrix();
+        glTranslated(x, y, z);
+
+            Garage(0,0,i*offset, s, texture1, texture2, i);
+
+        glPopMatrix();
+        }
 
 }

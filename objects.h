@@ -20,8 +20,6 @@ void StartLights(double , double , unsigned int, unsigned int );
 
 void Arc(double , double , double , double , double , double , double , unsigned int);
 
-// void Garage(double , double , double , double , unsigned int);
-
 void Garages(double , double , double , double , unsigned int, unsigned int);
 
 void renderRailings(double , double , double , unsigned int );
