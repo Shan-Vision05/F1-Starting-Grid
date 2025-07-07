@@ -1,10 +1,19 @@
 # F1-Starting-Grid
 An OpenGL demo rendering a 3D Formula 1 starting grid with detailed car models, track markings and dynamic lighting.
 
-Final Project Shanmukha_Vamshi : 3D Scene 
+Images of The Scene
 
-Shanmukha Vamshi Kuruba
-CSCI5229 Summer 2025
+First Person View
+
+![alt text](image-2.png)
+
+Car View
+
+![alt text](image-1.png)
+
+OverHead Perspective View
+
+![alt text](image.png)
 
 
 Key bindings
@@ -123,17 +132,3 @@ Most Time consuming tasks for me:
         Initially, I was directly rendering the ModelView matrix where I created the object and applied transformations to my coordinates to get the world coordinates. I was stuck here for a very long time. Later, I realized that I wasn't taking into account that the ModelView matrix at the object creation point also included the values from the camera coordinates we set at projection time. I then stored the matrix right after projection and multiplied its inverse with the ModelView matrix, which gave me the correct world-coordinate values.
 
 
-Images of The Scene
-
-
-First Person View
-
-![alt text](image-2.png)
-
-Car View
-
-![alt text](image-1.png)
-
-OverHead Perspective View
-
-![alt text](image.png)
